@@ -1,6 +1,7 @@
 import React from "react";
-import Link from "next/link";
+import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
+import {Button, Table} from "@geist-ui/core";
 
 type Ticket = {
   id: number,
@@ -9,18 +10,33 @@ type Ticket = {
   title: string
 }
 
+
 // @ts-ignore
 function TicketManager({tickets}: Ticket[]) {
-  console.log(tickets);
+  console.log(tickets)
+  const router = useRouter()
+
+  const renderAction = (value: number) => {
+    const navigateToTicket = () => {
+      router.push(`/ticket-manager/ticket/${value}`)
+    }
+    return (
+      <Button auto scale={1/3} font="12px" onClick={navigateToTicket}>Navigate</Button>
+    )
+  }
   return (
     <>
       <h2>Ticket Manager</h2>
-      {tickets.map((ticket: Ticket) => (
-        <div key={`${ticket.id}`}>
-          <Link href={`/ticket-manager/ticket/${ticket.id}`}>{ticket.title}</Link>
-        </div>
-        )
-      )}
+      <Button>Create Ticket</Button>
+      <Table data={tickets}>
+        {tickets.map((ticket: Ticket) => (
+          <>
+            <Table.Column key={`${ticket.id}`} prop="id" label="id" />
+            <Table.Column key={`${ticket.title}`} prop="title" label="title" render={renderAction}/>
+          </>
+          )
+        )}
+      </Table>
 
     </>
   )
