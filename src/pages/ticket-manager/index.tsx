@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
-import {Button, Table, Text} from "@geist-ui/core";
+import {Button, Modal, Table, Text, Input} from "@geist-ui/core";
+import styled from "styled-components";
 
 type Ticket = {
   id: number,
@@ -14,6 +15,16 @@ type Ticket = {
 // @ts-ignore
 function TicketManager({tickets}: Ticket[]) {
   const router = useRouter()
+  const [state, setState] = useState(false)
+  const handler = () => setState(true)
+  const closeHandler = () => {
+    setState(false)
+  }
+
+  const newTicket = {
+    name: '',
+    description: ''
+  }
 
   const renderAction = (value: number) => {
     const navigateToTicket = () => {
@@ -28,10 +39,23 @@ function TicketManager({tickets}: Ticket[]) {
     const newDate = new Date(value).toLocaleDateString("en-US")
     return <Text>{newDate}</Text>
   }
+
+  const TicketManagerContainer = styled.div`
+    margin: 2rem;
+  `
+
+  const TicketManagerHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+  `
+
   return (
-    <>
-      <h2>Ticket Manager</h2>
-      <Button>Create Ticket</Button>
+    <TicketManagerContainer>
+      <TicketManagerHeader>
+        <h2>Ticket Manager</h2>
+        <Button onClick={handler}>Create Ticket</Button>
+      </TicketManagerHeader>
+
       <Table data={tickets}>
         {tickets.map((ticket: Ticket) => (
           <>
@@ -44,7 +68,21 @@ function TicketManager({tickets}: Ticket[]) {
         )}
       </Table>
 
-    </>
+    {/*  Modal  */}
+      <div>
+        <Modal visible={state} onClose={closeHandler}>
+          <Modal.Title>Modal</Modal.Title>
+          <Modal.Subtitle>This is a modal</Modal.Subtitle>
+          <Modal.Content>
+            <Input label="Name" placeholder="" />
+            <Input label="Description" placeholder="" />
+          </Modal.Content>
+          <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
+          <Modal.Action>Submit</Modal.Action>
+        </Modal>
+      </div>
+
+    </TicketManagerContainer>
   )
 }
 
