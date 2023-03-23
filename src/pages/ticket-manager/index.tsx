@@ -1,7 +1,7 @@
 import React from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
-import {Button, Table} from "@geist-ui/core";
+import {Button, Table, Text} from "@geist-ui/core";
 
 type Ticket = {
   id: number,
@@ -13,7 +13,6 @@ type Ticket = {
 
 // @ts-ignore
 function TicketManager({tickets}: Ticket[]) {
-  console.log(tickets)
   const router = useRouter()
 
   const renderAction = (value: number) => {
@@ -21,8 +20,13 @@ function TicketManager({tickets}: Ticket[]) {
       router.push(`/ticket-manager/ticket/${value}`)
     }
     return (
-      <Button auto scale={1/3} font="12px" onClick={navigateToTicket}>Navigate</Button>
+      <Button auto scale={1/3} font="0.75rem" onClick={navigateToTicket}>Navigate</Button>
     )
+  }
+
+  const renderDate = (value: string) => {
+    const newDate = new Date(value).toLocaleDateString("en-US")
+    return <Text>{newDate}</Text>
   }
   return (
     <>
@@ -31,8 +35,10 @@ function TicketManager({tickets}: Ticket[]) {
       <Table data={tickets}>
         {tickets.map((ticket: Ticket) => (
           <>
-            <Table.Column key={`${ticket.id}`} prop="id" label="id" />
-            <Table.Column key={`${ticket.title}`} prop="title" label="title" render={renderAction}/>
+            <Table.Column key={`${ticket.title}`} prop="title" label="title" />
+            <Table.Column key={`${ticket.description}`} prop="description" label="description" />
+            <Table.Column key={`${ticket.created_at}`} prop="created_at" label="Created At" render={renderDate}/>
+            <Table.Column key={`${ticket.id}+${ticket.title}`} prop="id" label="Operation" render={renderAction}/>
           </>
           )
         )}

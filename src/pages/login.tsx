@@ -1,10 +1,15 @@
 import React from "react";
-import Link from "next/link";
+import {Button} from "@geist-ui/core";
+import {useRouter} from "next/router";
 
 function Login() {
+  const router = useRouter()
+  function login() {
+    router.push('/ticket-manager')
+  }
   return (
     <>
-      <Link href="/ticket-manager">Login</Link>
+      <Button onClick={login}>Login</Button>
     </>
   )
 }
