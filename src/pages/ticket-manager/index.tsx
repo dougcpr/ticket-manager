@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
-import {Button, Modal, Table, Text, Input} from "@geist-ui/core";
+import {Button, Modal, Table, Text, Input, ButtonGroup, Spacer} from "@geist-ui/core";
 import styled from "styled-components";
+import { useFormik } from 'formik';
 
 type Ticket = {
   id: number,
@@ -11,9 +12,19 @@ type Ticket = {
   title: string
 }
 
+const TicketManagerContainer = styled.div`
+    margin: 2rem;
+  `
+
+const TicketManagerHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+  `
+
 
 // @ts-ignore
-function TicketManager({tickets}: Ticket[]) {
+function TicketManager({data}: Ticket[]) {
+  const [tickets, setTickets] = useState(data)
   const router = useRouter()
   const [state, setState] = useState(false)
   const handler = () => setState(true)
@@ -21,17 +32,53 @@ function TicketManager({tickets}: Ticket[]) {
     setState(false)
   }
 
-  const newTicket = {
-    name: '',
-    description: ''
-  }
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      description: ''
+    },
+    onSubmit: async (values: Partial<Ticket>) => {
+      console.log(values)
+      setState(false)
 
-  const renderAction = (value: number) => {
+      try {
+        const { data, error } = await supabase
+          .from('Tickets')
+          .insert([
+            values,
+          ])
+        // TODO: Fetch data again?
+      } catch (err) {
+        console.error(err)
+      } finally {}
+      formik.handleReset({})
+    },
+  });
+
+  const renderActions = (value: string | number, rowData: Ticket, index: number) => {
     const navigateToTicket = () => {
       router.push(`/ticket-manager/ticket/${value}`)
     }
+    const deleteTicket = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('Tickets')
+          .delete()
+          .eq('id', value)
+        // remove ticket from table data source without re-fetching
+        setTickets((last: Ticket[]) => last.filter((_: any, dataIndex: number) => dataIndex !== index))
+
+      } catch (err) {
+        console.error(err)
+      } finally {}
+    }
     return (
-      <Button auto scale={1/3} font="0.75rem" onClick={navigateToTicket}>Navigate</Button>
+      <>
+        <Button type="success" auto scale={1/2} font="0.75rem" onClick={navigateToTicket}>Navigate</Button>
+        <Spacer w={2}/>
+        <Button type="error" auto scale={1/2} font="0.75rem" onClick={deleteTicket}>Delete</Button>
+      </>
+
     )
   }
 
@@ -40,14 +87,6 @@ function TicketManager({tickets}: Ticket[]) {
     return <Text>{newDate}</Text>
   }
 
-  const TicketManagerContainer = styled.div`
-    margin: 2rem;
-  `
-
-  const TicketManagerHeader = styled.div`
-    display: flex;
-    justify-content: space-between;
-  `
 
   return (
     <TicketManagerContainer>
@@ -57,28 +96,25 @@ function TicketManager({tickets}: Ticket[]) {
       </TicketManagerHeader>
 
       <Table data={tickets}>
-        {tickets.map((ticket: Ticket) => (
-          <>
-            <Table.Column key={`${ticket.title}`} prop="title" label="title" />
-            <Table.Column key={`${ticket.description}`} prop="description" label="description" />
-            <Table.Column key={`${ticket.created_at}`} prop="created_at" label="Created At" render={renderDate}/>
-            <Table.Column key={`${ticket.id}+${ticket.title}`} prop="id" label="Operation" render={renderAction}/>
-          </>
-          )
-        )}
+          <Table.Column prop="title" label="title" />
+          <Table.Column prop="description" label="description" />
+          <Table.Column prop="created_at" label="Created At" render={renderDate}/>
+          <Table.Column prop="id" label="Operation" render={renderActions}/>
       </Table>
 
     {/*  Modal  */}
       <div>
         <Modal visible={state} onClose={closeHandler}>
-          <Modal.Title>Modal</Modal.Title>
-          <Modal.Subtitle>This is a modal</Modal.Subtitle>
+          <Modal.Title>Create Ticket</Modal.Title>
           <Modal.Content>
-            <Input label="Name" placeholder="" />
-            <Input label="Description" placeholder="" />
+            <form>
+              <Input id="title" name="title" label="Name" placeholder="" onChange={formik.handleChange} value={formik.values.title}/>
+              <Spacer h={2}/>
+              <Input id="description" name="description" label="Description" placeholder="" onChange={formik.handleChange} value={formik.values.description}/>
+            </form>
           </Modal.Content>
           <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
-          <Modal.Action>Submit</Modal.Action>
+          <Modal.Action onClick={() => formik.handleSubmit()}>Submit</Modal.Action>
         </Modal>
       </div>
 
@@ -87,17 +123,13 @@ function TicketManager({tickets}: Ticket[]) {
 }
 
 export async function getServerSideProps() {
-
-
   let { data, error } = await supabase
     .from('Tickets')
     .select('*')
 
-
+  // TODO: Fix. Feels Bad
   return {
-    props: {
-      tickets: data
-    },
+    props: {data},
   }
 }
 
