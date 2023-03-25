@@ -1,7 +1,7 @@
 // Example of how to verify and get user data server-side.
 import {supabase} from "@/lib/supabaseClient";
 
-const getUser = async (req, res) => {
+const getUser = async (req: any, res: any) => {
   const token = req.headers.token
 
   const { data: user, error } = await supabase.auth.api.getUser(token)
