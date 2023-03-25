@@ -30,16 +30,15 @@ const LoginCard = styled(Card)`
 
 async function signInWithGithub() {
   try {
-    const { data } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signIn({
       provider: 'github'
     })
-    console.log(data)
   } catch (e) {
     console.error(e)
   }
 }
 
-function Login() {
+function SignIn() {
   const router = useRouter()
   const formik = useFormik({
     initialValues: {
@@ -48,9 +47,9 @@ function Login() {
     },
     onSubmit: async (values: LoginCredentials) => {
       try {
-        const {data, error} = await supabase.auth.signInWithPassword(values);
-        console.log(data);
-        if (data.session) login()
+        const { user, session, error } = await supabase.auth.signIn(values);
+        if (session) await router.push('/')
+        // TODO: Show toast for successful sign in
         if (error) console.error(error)
       } catch (err) {
         console.error(err)
@@ -58,10 +57,6 @@ function Login() {
       formik.handleReset({})
     },
   });
-  function login() {
-    // set context for user auth
-    router.push('/ticket-manager')
-  }
   return (
     <CenterLayout>
       <LoginCard>
@@ -71,7 +66,7 @@ function Login() {
         <Spacer h={2}/>
         <Button style={{width: "100%"}} onClick={() => formik.handleSubmit()}>Login</Button>
         <Spacer h={0.5}/>
-        <Button style={{width: "100%"}} onClick={() => router.push('/signup')}>Sign Up</Button>
+        <Button style={{width: "100%"}} onClick={() => router.push('/sign-up')}>Sign Up</Button>
         <Spacer h={0.5}/>
         <ButtonGroup style={{ margin: "0.25rem 0", display: "flex"}}>
           <Button style={{ width: "100%", display: "grid", alignItems: "center"}} type="secondary" ghost onClick={() => signInWithGithub()}><Github /></Button>
@@ -84,4 +79,4 @@ function Login() {
   )
 }
 
-export default Login
+export default SignIn

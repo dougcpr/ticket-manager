@@ -4,6 +4,8 @@ import {supabase} from "@/lib/supabaseClient";
 import {Button, Modal, Table, Text, Input, ButtonGroup, Spacer} from "@geist-ui/core";
 import styled from "styled-components";
 import { useFormik } from 'formik';
+import {Http2ServerRequest} from "http2";
+import {IncomingMessage} from "http";
 
 type Ticket = {
   id: number,
@@ -122,15 +124,21 @@ function TicketManager({data}: Ticket[]) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ req } : any) {
+  const { user } = await supabase.auth.api.getUserByCookie(req)
+  if (!user) {
+    // If no user, redirect to index.
+    return { props: {}, redirect: { destination: '/', permanent: false } }
+  }
+
   let { data, error } = await supabase
     .from('Tickets')
     .select('*')
 
+  // If there is a user, return it.
   // TODO: Fix. Feels Bad
-  return {
-    props: {data},
-  }
+  return { props: { user , data} }
+
 }
 
 export default TicketManager
