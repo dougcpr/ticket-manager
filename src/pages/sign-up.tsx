@@ -32,8 +32,7 @@ function Login() {
     },
     onSubmit: async (values: LoginCredentials) => {
       try {
-        const {data} = await supabase.auth.signUp(values);
-        console.log(data)
+        await supabase.auth.signUp(values);
         // show successful sign up / check email for verification ? / naivgate user back to sign in
       } catch (err) {
         console.error(err)
