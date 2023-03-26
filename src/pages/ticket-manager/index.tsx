@@ -1,22 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
-import {Button, Modal, Table, Text, Input, ButtonGroup, Spacer} from "@geist-ui/core";
+import {Button, Modal, Table, Text, Input, Spacer} from "@geist-ui/core";
 import styled from "styled-components";
 import { useFormik } from 'formik';
-import {Http2ServerRequest} from "http2";
-import {IncomingMessage} from "http";
-import {Auth} from "@supabase/ui";
 import LogOut from "@geist-ui/icons/logOut";
-
-type Ticket = {
-  id: number,
-  assignedUser: string,
-  created_at: string,
-  description: string,
-  status: string,
-  title: string
-}
+import {Ticket, TicketComments} from "@/features/ticket/models";
 
 const TicketManagerContainer = styled.div`
     margin: 2rem;
@@ -66,7 +55,7 @@ function TicketManager({data}: Ticket[]) {
     },
   });
 
-  const renderActions = (value: string | number, rowData: Ticket, index: number) => {
+  const renderActions = (value: string | number | TicketComments[], rowData: Ticket, index: number) => {
     const navigateToTicket = () => {
       router.push(`/ticket-manager/ticket/${value}`)
     }
