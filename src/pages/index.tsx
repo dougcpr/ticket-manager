@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import useSWR from 'swr'
-import { Auth, Typography, Button } from '@supabase/ui'
+import { Auth } from '@supabase/ui'
 import {supabase} from "@/lib/supabaseClient";
-import LogOut from "@geist-ui/icons/logOut";
+import {useRouter} from "next/router";
 
 // pages
 import SignIn from "@/pages/sign-in";
-import useRouter from "next/router"
 
 // @ts-ignore
 const fetcher = ([url, token]) =>
@@ -17,7 +16,7 @@ const fetcher = ([url, token]) =>
   }).then((res) => res.json())
 
 const Index = () => {
-  const router = useRouter
+  const router = useRouter()
   const { user, session } = Auth.useUser()
   const { data, error } = useSWR(
     session ? ['/api/getUser', session.access_token] : null,
@@ -43,30 +42,22 @@ const Index = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (user) {
+      router.push('/ticket-manager')
+    }
+  }, [user])
+
   const View = () => {
     if (!user) {
       return (
         <SignIn />
       )
+    } else {
+      return (
+        <>Loading...</>
+      )
     }
-    return (
-      <>
-        {user && (
-          <>
-            <Button
-              icon={<LogOut/>}
-              type="outline"
-              onClick={() => supabase.auth.signOut()}
-            >
-              Log out
-            </Button>
-            {error && (
-              <Typography.Text type="danger">Failed to fetch user!</Typography.Text>
-            )}
-          </>
-        )}
-      </>
-    )
   }
   return (
     <View />

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
 import {Button, Modal, Table, Text, Input, ButtonGroup, Spacer} from "@geist-ui/core";
@@ -6,11 +6,15 @@ import styled from "styled-components";
 import { useFormik } from 'formik';
 import {Http2ServerRequest} from "http2";
 import {IncomingMessage} from "http";
+import {Auth} from "@supabase/ui";
+import LogOut from "@geist-ui/icons/logOut";
 
 type Ticket = {
   id: number,
+  assignedUser: string,
   created_at: string,
   description: string,
+  status: string,
   title: string
 }
 
@@ -19,8 +23,13 @@ const TicketManagerContainer = styled.div`
   `
 
 const TicketManagerHeader = styled.div`
-    display: flex;
-    justify-content: space-between;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  justify-content: space-between;
+  `
+
+const TicketManagerHeaderOperations = styled.div`
+  display: flex;
   `
 
 
@@ -89,16 +98,32 @@ function TicketManager({data}: Ticket[]) {
     return <Text>{newDate}</Text>
   }
 
+  async function signOut() {
+    await supabase.auth.signOut()
+    await router.push('/')
+  }
+
 
   return (
     <TicketManagerContainer>
       <TicketManagerHeader>
         <h2>Ticket Manager</h2>
-        <Button onClick={handler}>Create Ticket</Button>
+        <TicketManagerHeaderOperations>
+          <Button onClick={handler}>Create Ticket</Button>
+          <Spacer w={1}/>
+          <Button
+            icon={<LogOut/>}
+            onClick={() => signOut()}
+          >
+            Log out
+          </Button>
+        </TicketManagerHeaderOperations>
       </TicketManagerHeader>
 
       <Table data={tickets}>
           <Table.Column prop="title" label="title" />
+          <Table.Column prop="status" label="status" />
+          <Table.Column prop="assignedUser" label="Assignee" />
           <Table.Column prop="description" label="description" />
           <Table.Column prop="created_at" label="Created At" render={renderDate}/>
           <Table.Column prop="id" label="Operation" render={renderActions}/>
