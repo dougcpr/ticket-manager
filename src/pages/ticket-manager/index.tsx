@@ -66,7 +66,7 @@ function TicketManager({data}: Ticket[]) {
           .delete()
           .eq('id', value)
         // remove ticket from table data source without re-fetching
-        setTickets((last: Ticket[]) => last.filter((_: any, dataIndex: number) => dataIndex !== index))
+        setTickets((last: Ticket[]) => last.filter((_: Ticket, dataIndex: number) => dataIndex !== index))
 
       } catch (err) {
         console.error(err)

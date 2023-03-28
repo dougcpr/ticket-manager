@@ -5,13 +5,14 @@ export type Ticket = {
   description: string,
   status: string,
   title: string,
-  comments: TicketComments[]
+  TicketComments: TicketComments[]
 }
 
 export type TicketComments = {
   id: number,
-  message: string,
-  created_at: string,
   author: string,
-  deleted: boolean
+  created_at: string,
+  deleted: boolean,
+  message: string,
+  ticket_id: number
 }

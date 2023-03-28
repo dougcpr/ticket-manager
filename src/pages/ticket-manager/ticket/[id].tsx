@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
-import {Ticket} from "@/features/ticket/models";
+import {Ticket, TicketComments} from "@/features/ticket/models";
 import {PostgrestResponse} from "@supabase/supabase-js";
 import {Button, Textarea} from "@geist-ui/core";
+import {useFormik} from "formik";
+import {Auth} from "@supabase/ui";
 
 function TicketOverview() {
+  const { user } = Auth.useUser()
   const [ticket, setTicket] = useState<Partial<Ticket>>({})
   const router = useRouter()
   const {id} = router.query;
@@ -13,7 +16,9 @@ function TicketOverview() {
     try {
       supabase
         .from('Tickets')
-        .select('*')
+        .select(`
+         *,
+         TicketComments (*)`)
         .eq('id', id)
         .then(({data}: PostgrestResponse<Ticket>) => {
           console.log(data)
@@ -25,9 +30,26 @@ function TicketOverview() {
     }
   }, [])
 
-  function submitComment() {
-
-  }
+  const formik = useFormik({
+    initialValues: {
+      message: ''
+    },
+    onSubmit: async (values: Partial<TicketComments>) => {
+      try {
+        await supabase.from('TicketComments')
+          .insert([
+            {
+              ticket_id: ticket.id,
+              author: user?.email,
+              message: values.message
+            }
+          ])
+      } catch (err) {
+        console.error(err)
+      } finally {}
+      formik.handleReset({})
+    },
+  });
 
   return (
     <>
@@ -42,14 +64,15 @@ function TicketOverview() {
                   <div>{ticket.created_at}</div>
               </div>
               <h1>Comments</h1>
-              <Textarea placeholder="Enter a new comment." />
-              <Button onClick={() => submitComment()}>Submit Comment</Button>
+              <Textarea id="message" name="message" onChange={formik.handleChange} value={formik.values.message} placeholder="Enter a new comment." />
+              <Button onClick={() => formik.handleSubmit()}>Submit Comment</Button>
               <div>
-                {ticket?.comments?.map((comment) => {
+                {ticket?.TicketComments?.map((comment) => {
                   return (
                     <div key={comment.id}>
                       <div key={comment.message}>{comment.message}</div>
                       <div key={comment.author}>Author: {comment.author}</div>
+                      <div key={comment.created_at}>Author: {comment.created_at}</div>
                     </div>
                   )
                 })}
