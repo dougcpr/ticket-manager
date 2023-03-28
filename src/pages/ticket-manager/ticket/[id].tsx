@@ -6,29 +6,34 @@ import {PostgrestResponse} from "@supabase/supabase-js";
 import {Button, Textarea} from "@geist-ui/core";
 import {useFormik} from "formik";
 import {Auth} from "@supabase/ui";
-
+import {ParsedUrlQuery} from "querystring";
 function TicketOverview() {
   const { user } = Auth.useUser()
   const [ticket, setTicket] = useState<Partial<Ticket>>({})
   const router = useRouter()
-  const {id} = router.query;
+  const {id}: ParsedUrlQuery = router.query;
   useEffect(() => {
     try {
-      supabase
-        .from('Tickets')
-        .select(`
-         *,
-         TicketComments (*)`)
-        .eq('id', id)
-        .then(({data}: PostgrestResponse<Ticket>) => {
-          console.log(data)
-          // @ts-ignore
-          setTicket(data[0])
-        })
+      fetchTickets()
     } catch (e) {
       console.error(e)
     }
   }, [])
+
+  function fetchTickets() {
+    supabase
+      .from('Tickets')
+      .select(`
+         *,
+         TicketComments (*)`)
+      .eq('id', id)
+      .then(({data}: PostgrestResponse<Ticket>) => {
+        if (data) {
+          // @ts-ignore
+          setTicket(data[0])
+        }
+      })
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -44,6 +49,7 @@ function TicketOverview() {
               message: values.message
             }
           ])
+        fetchTickets()
       } catch (err) {
         console.error(err)
       } finally {}

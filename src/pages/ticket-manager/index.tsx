@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
 import {Button, Modal, Table, Text, Input, Spacer} from "@geist-ui/core";
@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { useFormik } from 'formik';
 import LogOut from "@geist-ui/icons/logOut";
 import {Ticket, TicketComments} from "@/features/ticket/models";
+import {Auth} from "@supabase/ui";
 
 const TicketManagerContainer = styled.div`
     margin: 2rem;
@@ -23,10 +24,22 @@ const TicketManagerHeaderOperations = styled.div`
 
 
 // @ts-ignore
-function TicketManager({data}: Ticket[]) {
-  const [tickets, setTickets] = useState(data)
+function TicketManager() {
+  const { user } = Auth.useUser()
+  const [tickets, setTickets] = useState<Ticket[]>()
   const router = useRouter()
   const [state, setState] = useState(false)
+  useEffect(() => {
+    fetchTickets()
+      .then((res) => {console.log(res)})
+  }, [])
+  async function fetchTickets() {
+    let { data } = await supabase
+      .from('Tickets')
+      .select('*')
+    if (data) setTickets(data)
+  }
+
   const handler = () => setState(true)
   const closeHandler = () => {
     setState(false)
@@ -35,19 +48,21 @@ function TicketManager({data}: Ticket[]) {
   const formik = useFormik({
     initialValues: {
       title: '',
-      description: ''
+      description: '',
+      status: 'Todo',
+      assignedUser: user?.email
     },
     onSubmit: async (values: Partial<Ticket>) => {
       console.log(values)
       setState(false)
 
       try {
-        const { data, error } = await supabase
+        await supabase
           .from('Tickets')
           .insert([
             values,
           ])
-        // TODO: Fetch data again?
+        await fetchTickets()
       } catch (err) {
         console.error(err)
       } finally {}
@@ -61,12 +76,18 @@ function TicketManager({data}: Ticket[]) {
     }
     const deleteTicket = async () => {
       try {
-        const { data, error } = await supabase
+        // delete ticket comments first
+        await supabase
+          .from('TicketComments')
+          .delete()
+          .eq('ticket_id', value)
+        // then delete ticket
+        await supabase
           .from('Tickets')
           .delete()
           .eq('id', value)
         // remove ticket from table data source without re-fetching
-        setTickets((last: Ticket[]) => last.filter((_: Ticket, dataIndex: number) => dataIndex !== index))
+        setTickets((last: Ticket[] | null | undefined) => last?.filter((_: Ticket, dataIndex: number) => dataIndex !== index))
 
       } catch (err) {
         console.error(err)
@@ -145,13 +166,9 @@ export async function getServerSideProps({ req } : any) {
     return { props: {}, redirect: { destination: '/', permanent: false } }
   }
 
-  let { data, error } = await supabase
-    .from('Tickets')
-    .select('*')
-
   // If there is a user, return it.
   // TODO: Fix. Feels Bad
-  return { props: { user , data} }
+  return { props: { user } }
 
 }
 
