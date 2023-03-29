@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import LogOut from "@geist-ui/icons/logOut";
 import {Ticket, TicketComments} from "@/features/ticket/models";
 import {Auth} from "@supabase/ui";
+import {renderDate} from "@/lib/helpers/sharedFunctions";
 
 const TicketManagerContainer = styled.div`
     margin: 2rem;
@@ -70,6 +71,10 @@ function TicketManager() {
     },
   });
 
+  const renderDateWithText = (value: string | undefined) => {
+    return <Text>{renderDate(value)}</Text>
+  }
+
   const renderActions = (value: string | number | TicketComments[], rowData: Ticket, index: number) => {
     const navigateToTicket = () => {
       router.push(`/ticket-manager/ticket/${value}`)
@@ -103,11 +108,6 @@ function TicketManager() {
     )
   }
 
-  const renderDate = (value: string) => {
-    const newDate = new Date(value).toLocaleDateString("en-US")
-    return <Text>{newDate}</Text>
-  }
-
   async function signOut() {
     await supabase.auth.signOut()
     await router.push('/')
@@ -135,7 +135,7 @@ function TicketManager() {
           <Table.Column prop="status" label="status" />
           <Table.Column prop="assignedUser" label="Assignee" />
           <Table.Column prop="description" label="description" />
-          <Table.Column prop="created_at" label="Created At" render={renderDate}/>
+          <Table.Column prop="created_at" label="Created At" render={renderDateWithText}/>
           <Table.Column prop="id" label="Operation" render={renderActions}/>
       </Table>
 
