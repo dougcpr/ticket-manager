@@ -3,7 +3,6 @@ import {useRouter} from "next/router";
 import styled from 'styled-components';
 import LogOut from "@geist-ui/icons/logOut";
 import {Button} from "@geist-ui/core";
-import Users from "@geist-ui/icons/users";
 import {supabase} from "@/lib/supabaseClient";
 import {Auth} from "@supabase/ui";
 
@@ -18,7 +17,7 @@ const NavBar = styled.div`
 
 const NavBarButtonGroup = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-row-gap: 1rem;
 `
 
@@ -41,7 +40,6 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
           <h2>Ticket Manager</h2>
           {/*This list is row-reversed to alight to right side,cause past doug was too lazy to find another solution*/}
           <NavBarButtonGroup>
-            <Button iconRight={<Users />} auto scale={2/3} />
             <Button onClick={signOut} iconRight={<LogOut />} auto scale={2/3} />
           </NavBarButtonGroup>
         </NavBar>
