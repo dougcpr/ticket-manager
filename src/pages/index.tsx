@@ -55,7 +55,7 @@ const Index = () => {
       )
     } else {
       return (
-        <>Loading...</>
+        <></>
       )
     }
   }

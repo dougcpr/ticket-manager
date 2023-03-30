@@ -4,7 +4,6 @@ import {supabase} from "@/lib/supabaseClient";
 import {Button, Modal, Table, Text, Input, Spacer} from "@geist-ui/core";
 import styled from "styled-components";
 import { useFormik } from 'formik';
-import LogOut from "@geist-ui/icons/logOut";
 import {Ticket, TicketComments} from "@/features/ticket/models";
 import {Auth} from "@supabase/ui";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
@@ -14,13 +13,9 @@ const TicketManagerContainer = styled.div`
   `
 
 const TicketManagerHeader = styled.div`
-  display: grid;
-  grid-template-columns: 4fr 1fr;
-  justify-content: space-between;
-  `
-
-const TicketManagerHeaderOperations = styled.div`
   display: flex;
+  justify-content: end;
+  margin: 1rem 0;
   `
 
 
@@ -32,7 +27,7 @@ function TicketManager() {
   const [state, setState] = useState(false)
   useEffect(() => {
     fetchTickets()
-      .then((res) => {console.log(res)})
+      .then((res) => {console.log("fetched tickets")})
   }, [])
   async function fetchTickets() {
     let { data } = await supabase
@@ -54,7 +49,6 @@ function TicketManager() {
       assignedUser: user?.email
     },
     onSubmit: async (values: Partial<Ticket>) => {
-      console.log(values)
       setState(false)
 
       try {
@@ -108,28 +102,11 @@ function TicketManager() {
     )
   }
 
-  async function signOut() {
-    await supabase.auth.signOut()
-    await router.push('/')
-  }
-
-
   return (
     <TicketManagerContainer>
       <TicketManagerHeader>
-        <h2>Ticket Manager</h2>
-        <TicketManagerHeaderOperations>
-          <Button onClick={handler}>Create Ticket</Button>
-          <Spacer w={1}/>
-          <Button
-            icon={<LogOut/>}
-            onClick={() => signOut()}
-          >
-            Log out
-          </Button>
-        </TicketManagerHeaderOperations>
+        <Button onClick={handler}>Create Ticket</Button>
       </TicketManagerHeader>
-
       <Table data={tickets}>
           <Table.Column prop="title" label="title" />
           <Table.Column prop="status" label="status" />
