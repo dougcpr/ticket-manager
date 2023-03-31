@@ -8,6 +8,8 @@ import Github from "@geist-ui/icons/github";
 import Facebook from "@geist-ui/icons/facebook";
 import Youtube from "@geist-ui/icons/youtube";
 import Twitter from "@geist-ui/icons/twitter";
+import User from "@geist-ui/icons/user";
+import Lock from "@geist-ui/icons/lock";
 
 type LoginCredentials = {
   email: string,
@@ -60,9 +62,9 @@ function SignIn() {
   return (
     <CenterLayout>
       <LoginCard>
-        <Input id="email" name="email" label="Email" placeholder="" onChange={formik.handleChange} value={formik.values.email}/>
+        <Input id="email" name="email" placeholder="" label="Email" width="100%" onChange={formik.handleChange} value={formik.values.email}/>
         <Spacer h={2}/>
-        <Input.Password id="password" name="password" label="Password" placeholder="" onChange={formik.handleChange} value={formik.values.password}/>
+        <Input.Password id="password" name="password" placeholder="" label="Password" width="100%" onChange={formik.handleChange} value={formik.values.password}/>
         <Spacer h={2}/>
         <Button style={{width: "100%"}} onClick={() => formik.handleSubmit()}>Login</Button>
         <Spacer h={0.5}/>
