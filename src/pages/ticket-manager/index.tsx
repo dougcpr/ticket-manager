@@ -1,22 +1,58 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
-import {Button, Modal, Table, Text, Input, Spacer} from "@geist-ui/core";
+import {Button, Modal, Table, Text, Input, Spacer, Tabs} from "@geist-ui/core";
 import styled from "styled-components";
 import { useFormik } from 'formik';
 import {Ticket, TicketComments} from "@/features/ticket/models";
 import {Auth} from "@supabase/ui";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
+import Plus from "@geist-ui/icons/plus";
+import Filter from "@geist-ui/icons/filter";
 
 const TicketManagerContainer = styled.div`
-    margin: 2rem;
-  `
+  background-color: ${({theme}) => theme.secondaryBackgroundColor};
+  padding: 1rem;
+  border-top-left-radius: 1rem;
+`
 
 const TicketManagerHeader = styled.div`
   display: flex;
-  justify-content: end;
-  margin: 1rem 0;
-  `
+  justify-content: space-between;
+`
+
+const TicketManagerTabsContainer = styled.div`
+  width: 100%;
+  margin-right: 2rem;
+`
+
+const TicketManagerActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+//TODO: make its own component
+const TicketList = styled.div``
+
+const TicketListHeader = styled.div``
+
+const TicketListItem = styled.div``
+
+const TicketDetailsContainer = styled.div``
+
+const TicketDetailsHeader = styled.div``
+
+const TicketDetailsDescription = styled.div``
+
+const TicketDetailsLinkedTickets = styled.div``
+
+const TicketDetailsAttachments = styled.div``
+
+const TicketStatusSideMenu = styled.div``
+
+const TicketStatusTicketStatus = styled.div``
+
+const TicketStatusTicketHistory = styled.div``
 
 
 // @ts-ignore
@@ -103,35 +139,54 @@ function TicketManager() {
   }
 
   return (
+    // <TicketManagerContainer>
+    //   <TicketManagerHeader>
+    //     <Button onClick={handler}>Create Ticket</Button>
+    //   </TicketManagerHeader>
+    //   <Table data={tickets}>
+    //       <Table.Column prop="title" label="title" />
+    //       <Table.Column prop="status" label="status" />
+    //       <Table.Column prop="assignedUser" label="Assignee" />
+    //       <Table.Column prop="description" label="description" />
+    //       <Table.Column prop="created_at" label="Created At" render={renderDateWithText}/>
+    //       <Table.Column prop="id" label="Operation" render={renderActions}/>
+    //   </Table>
+    //
+    //
+    // </TicketManagerContainer>
     <TicketManagerContainer>
       <TicketManagerHeader>
-        <Button onClick={handler}>Create Ticket</Button>
+        <TicketManagerTabsContainer>
+          <Tabs initialValue="1">
+            <Tabs.Item label="Open Tickets" value="1">
+            {/*  loop over tickets */}
+            {/*  create ticket cell item */}
+            {/*  on click, it should load ticket details to the right*/}
+              <TicketList />
+            </Tabs.Item>
+            <Tabs.Item label="Live Chats" value="2"></Tabs.Item>
+            <Tabs.Item label="Closed Tickets" value="3"></Tabs.Item>
+          </Tabs>
+        </TicketManagerTabsContainer>
+        <TicketManagerActions>
+          {/*Create this as a FAB icon*/}
+          <Button icon={<Plus />} onClick={handler}>Create Ticket</Button>
+        </TicketManagerActions>
       </TicketManagerHeader>
-      <Table data={tickets}>
-          <Table.Column prop="title" label="title" />
-          <Table.Column prop="status" label="status" />
-          <Table.Column prop="assignedUser" label="Assignee" />
-          <Table.Column prop="description" label="description" />
-          <Table.Column prop="created_at" label="Created At" render={renderDateWithText}/>
-          <Table.Column prop="id" label="Operation" render={renderActions}/>
-      </Table>
-
-    {/*  Modal  */}
-      <div>
-        <Modal visible={state} onClose={closeHandler}>
-          <Modal.Title>Create Ticket</Modal.Title>
-          <Modal.Content>
-            <form>
-              <Input id="title" name="title" label="Name" placeholder="" onChange={formik.handleChange} value={formik.values.title}/>
-              <Spacer h={2}/>
-              <Input id="description" name="description" label="Description" placeholder="" onChange={formik.handleChange} value={formik.values.description}/>
-            </form>
-          </Modal.Content>
-          <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
-          <Modal.Action onClick={() => formik.handleSubmit()}>Submit</Modal.Action>
-        </Modal>
-      </div>
-
+         <div>
+           <Modal visible={state} onClose={closeHandler}>
+             <Modal.Title>Create Ticket</Modal.Title>
+             <Modal.Content>
+               <form>
+                 <Input id="title" name="title" label="Name" placeholder="" onChange={formik.handleChange} value={formik.values.title}/>
+                 <Spacer h={2}/>
+                 <Input id="description" name="description" label="Description" placeholder="" onChange={formik.handleChange} value={formik.values.description}/>
+               </form>
+             </Modal.Content>
+             <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
+             <Modal.Action onClick={() => formik.handleSubmit()}>Submit</Modal.Action>
+           </Modal>
+         </div>
     </TicketManagerContainer>
   )
 }

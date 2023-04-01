@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 const Card = styled.div`
     border-radius: 0.1875rem;
-    background-color: white;
+  background-color: ${({theme}) => theme.body};
     box-sizing: border-box;
     border: 1px solid #e0e0e0;
-    color: black;
+    color:  ${({theme}) => theme.text};
     margin: 0;
     min-width: 6.25rem;
     padding: 0.75rem 1rem 0.75rem 0.875rem;

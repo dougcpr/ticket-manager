@@ -8,8 +8,6 @@ import Github from "@geist-ui/icons/github";
 import Facebook from "@geist-ui/icons/facebook";
 import Youtube from "@geist-ui/icons/youtube";
 import Twitter from "@geist-ui/icons/twitter";
-import User from "@geist-ui/icons/user";
-import Lock from "@geist-ui/icons/lock";
 
 type LoginCredentials = {
   email: string,
@@ -26,7 +24,7 @@ const CenterLayout = styled.div`
 `
 
 const LoginCard = styled(Card)`
-  width: 20rem !important;
+  width: 20rem;
   margin: 2rem;
 `
 
