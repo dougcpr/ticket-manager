@@ -46,11 +46,6 @@ const SideNavBarNavigationButtons = styled.div`
 
 const SideNavBarOperationalButtons = styled.div``
 
-const NavBarButtonGroup = styled.div`
-  display: flex;
-  margin: 0 2rem;
-`
-
 type AppLayoutProps = {
   children: any;
 };
@@ -73,7 +68,7 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
   }
   if (user) {
     return (
-      <>
+      <div>
         <NavBarContainer>
           <SideNavBar>
             <Spacer h={7}/>
@@ -93,22 +88,17 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
           <AppContainer>
             <NavBar>
               <h2>Help Desk</h2>
-              {/*This list is row-reversed to alight to right side,cause past doug was too lazy to find another solution*/}
-              <NavBarButtonGroup>
-                <Input id="search" name="search" label="Search App" placeholder="" />
-              </NavBarButtonGroup>
             </NavBar>
             {children}
           </AppContainer>
         </NavBarContainer>
-
-      </>
+      </div>
     );
   } else {
     return (
-      <>
+      <div>
         {children}
-      </>
+      </div>
     )
   }
 
