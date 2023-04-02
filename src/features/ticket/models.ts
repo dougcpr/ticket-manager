@@ -5,6 +5,7 @@ export type Ticket = {
   description: string,
   status: string,
   title: string,
+  reportedBy: string,
   TicketComments: TicketComments[]
 }
 
