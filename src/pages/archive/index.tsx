@@ -12,7 +12,7 @@ const SettingsContainer = styled.div`
 function Archive() {
   return (
     <SettingsContainer>
-      <div style={{color: "black"}}>
+      <div>
         Hello Archive
       </div>
     </SettingsContainer>

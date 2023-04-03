@@ -41,7 +41,6 @@ const TicketComment = styled.div`
 const TicketCommentFooter = styled.div`
   font-size: 0.75rem;
   font-style: italic;
-  color: black;
 `
 function TicketsComments({selectedTicket}: any) {
   const { user } = Auth.useUser()
@@ -58,7 +57,7 @@ function TicketsComments({selectedTicket}: any) {
       padding: "0.25rem",
       borderRadius: "0.25rem"
     }
-    style.backgroundColor = email === user?.email ? 'rgba(10, 132, 255, 1)' : 'rgba(44, 44, 46, 1)'
+    style.backgroundColor = email === user?.email ? '#5e6272' : '#8c8f9a'
     return style
   }
   function calculateCommentOrientation(email: string) {

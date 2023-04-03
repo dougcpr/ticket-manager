@@ -7,14 +7,13 @@ import TicketsDetails from "@/components/ticket-manager/components/TicketDetails
 import TicketStatus from "@/components/ticket-manager/components/TicketStatus";
 
 const TicketSection = styled.div`
-  color: black;
   display: grid;
   grid-template-columns: 2fr 6fr 2fr;
-  height: 90vh;
 `
 
 const TicketListContainer = styled.div`
   border-right: 1px solid #e3e8ee;
+  padding-right: 0.5rem;
 `
 
 const TicketListHeader = styled.div`
@@ -64,7 +63,7 @@ function TicketsOverview({status}: any) {
   }
 
   function changeTicketBackground(id: number) {
-    if (id === selectedTicket?.id) return '#A9C8F1FF'
+    if (id === selectedTicket?.id) return '#5e6272'
   }
 
   async function gatherTicketDetails(id: number) {

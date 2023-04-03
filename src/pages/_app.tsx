@@ -8,8 +8,8 @@ import {ThemeProvider} from "styled-components";
 import AppLayout from "@/components/AppLayout";
 
 const theme = {
-  body: '#f9fafb',
-  text: '#1a1f36',
+  body: '#1a1f36',
+  text: 'white',
   colors: {
     black: '#000',
     button_disabled: 'rgba(0, 0, 0, 0.26)',

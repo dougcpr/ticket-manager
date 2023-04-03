@@ -36,6 +36,7 @@ export const GlobalStyles = createGlobalStyle`
     height: 100%;
     margin: 0;
     padding: 0;
+    color: ${({theme}: Theme) => theme.text} !important;
   }
   body {
     transition: background 0.3s ease-in-out;

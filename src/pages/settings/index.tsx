@@ -12,7 +12,7 @@ const SettingsContainer = styled.div`
 function Settings() {
   return (
     <SettingsContainer>
-      <div style={{color: "black"}}>
+      <div>
         Hello Settings
       </div>
     </SettingsContainer>

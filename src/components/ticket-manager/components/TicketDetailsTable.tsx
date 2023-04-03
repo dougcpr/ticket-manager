@@ -10,15 +10,15 @@ const TicketDetailsCollectedTable = styled.div`
 
 const TicketDetailsCollectedRow = styled.div`
   :nth-child(2) {
-    border-right: 1px solid black;
+    border-right: 1px solid;
   }
 `
 
 const TicketDetailsCollectedCell = styled.div`
-  border-left: 1px solid black;
-  border-top: 1px solid black;
+  border-left: 1px solid;
+  border-top: 1px solid;
   :last-child{
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid;
   }
   padding: 1rem;
 `
