@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import {File} from "@geist-ui/icons";
 import TicketDetailsTable from "@/components/ticket-manager/components/TicketDetailsTable";
+import TicketsComments from "@/components/ticket-manager/components/TicketComments";
 
 const TicketDetailsContainer = styled.div`
   min-height: 1rem;
@@ -45,8 +46,8 @@ function TicketsDetails({selectedTicket}: any) {
             Information collected for this ticket
           </TicketDetailsDescriptionHeader>
           <TicketDetailsTable tableData={selectedTicket}/>
+          <TicketsComments selectedTicket={selectedTicket}/>
         </TicketDetailsDescription>
-        <pre>{JSON.stringify(selectedTicket, null, 2)}</pre>
       </TicketDetailsContainer>
     )
   } else {

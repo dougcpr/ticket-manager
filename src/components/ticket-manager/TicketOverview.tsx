@@ -10,11 +10,10 @@ const TicketSection = styled.div`
   color: black;
   display: grid;
   grid-template-columns: 2fr 6fr 2fr;
+  height: 90vh;
 `
 
 const TicketListContainer = styled.div`
-  display: grid;
-  grid-template-rows: 2rem repeat(10, 1fr);
   border-right: 1px solid #e3e8ee;
 `
 
@@ -39,7 +38,7 @@ const TicketListItem = styled.div`
   }
 `
 
-function TicketsOverview() {
+function TicketsOverview({status}: any) {
   const [tickets, setTickets] = useState<Ticket[]>()
   const [selectedTicket, setSelectedTicket] = useState<Ticket>()
   useEffect(() => {
@@ -47,16 +46,29 @@ function TicketsOverview() {
       .then((res) => {console.log("fetched tickets")})
   }, [])
   async function fetchTickets() {
-    let { data } = await supabase
-      .from('Tickets')
-      .select(`
+    if (status !== null) {
+      let { data } = await supabase
+        .from('Tickets')
+        .select(`
          *,
          TicketMetaData (*),
          TicketComments(*)`)
-      .neq('status', 'Closed')
-      .order('created_at')
-      .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
-    if (data) setTickets(data)
+        .eq('status', status)
+        .order('created_at')
+        .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
+      if (data) setTickets(data)
+    } else {
+      let { data } = await supabase
+        .from('Tickets')
+        .select(`
+         *,
+         TicketMetaData (*),
+         TicketComments(*)`)
+        .neq('status', "Closed")
+        .order('created_at')
+        .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
+      if (data) setTickets(data)
+    }
   }
 
   function changeTicketBackground(id: number) {

@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {Select} from "@geist-ui/core";
 import {supabase} from "@/lib/supabaseClient";
 import {TicketPriorities} from "@/features/ticket/models";
+import {PostgrestResponse} from "@supabase/supabase-js";
 
 const TicketStatusContainer = styled.div`
   padding-top: 2rem;
@@ -16,6 +17,18 @@ const TicketStatusHeader = styled.div`
   text-transform: uppercase;
 `
 function TicketStatus({selectedTicket}: any) {
+  const [users, setUsers] = useState<any>()
+
+
+  useEffect(() => {
+    supabase
+      .from("Employees")
+      .select("*")
+      .then(({data}: PostgrestResponse<any>) => {
+        console.log(data)
+        setUsers(data)
+      })
+  }, [])
 
   async function updateTicketData(value: string | string[], column: string, table: string, id: string) {
     let tempObj: any = {};
@@ -34,7 +47,7 @@ function TicketStatus({selectedTicket}: any) {
           <Select.Option value="In Progress">In Progress</Select.Option>
           <Select.Option value="Waiting on Engineering">Waiting on Engineering</Select.Option>
           <Select.Option value="Waiting on Customer">Waiting on Customer</Select.Option>
-          <Select.Option value="Done">Done</Select.Option>
+          <Select.Option value="Closed">Closed</Select.Option>
         </Select>
         <TicketStatusHeader>Ticket Type</TicketStatusHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'ticketType', 'TicketMetaData', selectedTicket?.TicketMetaData[0].id)}}  value={selectedTicket?.TicketMetaData[0].ticketType}>
@@ -44,8 +57,12 @@ function TicketStatus({selectedTicket}: any) {
         </Select>
         <TicketStatusHeader>Assigned To</TicketStatusHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'assignedTo', 'TicketMetaData', selectedTicket?.TicketMetaData[0].id)}}  value={selectedTicket?.TicketMetaData[0].assignedTo}>
-        {/*  loop over users*/}
-          <Select.Option value="doug.cpr@gmail.com">doug.cpr@gmail.com</Select.Option>
+          {users && users.map((user: any) => {
+            return (
+              <Select.Option key={user.id} value={user.email}>{user.name}</Select.Option>
+            )
+          })}
+
         </Select>
         <TicketStatusHeader>Priority</TicketStatusHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'priority', 'TicketMetaData', selectedTicket?.TicketMetaData[0].id)}}  value={selectedTicket?.TicketMetaData[0].priority}>
