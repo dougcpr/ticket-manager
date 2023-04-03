@@ -4,6 +4,7 @@ import {supabase} from "@/lib/supabaseClient";
 import {Ticket} from "@/features/ticket/models";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsDetails from "@/components/ticket-manager/components/TicketDetails";
+import TicketStatus from "@/components/ticket-manager/components/TicketStatus";
 
 const TicketSection = styled.div`
   color: black;
@@ -38,13 +39,6 @@ const TicketListItem = styled.div`
   }
 `
 
-const TicketStatusSideMenu = styled.div`
-  background-color: red;
-  width: 100%;
-  height: 1rem;
-`
-
-
 function TicketsOverview() {
   const [tickets, setTickets] = useState<Ticket[]>()
   const [selectedTicket, setSelectedTicket] = useState<Ticket>()
@@ -60,13 +54,27 @@ function TicketsOverview() {
          TicketMetaData (*),
          TicketComments(*)`)
       .neq('status', 'Closed')
+      .order('created_at')
       .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
     if (data) setTickets(data)
   }
 
-  function clickedTicket(id: number) {
+  function changeTicketBackground(id: number) {
     if (id === selectedTicket?.id) return '#A9C8F1FF'
   }
+
+  async function gatherTicketDetails(id: number) {
+    let { data } = await supabase
+      .from('Tickets')
+      .select(`
+         *,
+         TicketMetaData (*),
+         TicketComments(*)`)
+      .eq('id', id)
+      .single()
+    setSelectedTicket(data)
+  }
+
   return (
     <TicketSection>
       <TicketListContainer>
@@ -76,7 +84,7 @@ function TicketsOverview() {
         </TicketListHeader>
         {tickets && tickets.map((ticket: Ticket) => {
           return (
-            <TicketListItem style={{backgroundColor: clickedTicket(ticket.id)}} onClick={() => setSelectedTicket(ticket)} key={ticket.id}>
+            <TicketListItem style={{backgroundColor: changeTicketBackground(ticket.id)}} onClick={() => gatherTicketDetails(ticket.id)} key={ticket.id}>
                 <div style={{paddingLeft: "0.5rem"}}>{ticket.title}</div>
                 <div style={{fontWeight: "normal", textAlign: "end", paddingRight: "0.5rem"}}>{renderDate(ticket.created_at)}</div>
             </TicketListItem>
@@ -84,7 +92,7 @@ function TicketsOverview() {
         })}
       </TicketListContainer>
       <TicketsDetails selectedTicket={selectedTicket}/>
-      <TicketStatusSideMenu />
+      <TicketStatus selectedTicket={selectedTicket}/>
     </TicketSection>
   )
 }

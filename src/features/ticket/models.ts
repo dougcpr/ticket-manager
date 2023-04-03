@@ -27,5 +27,13 @@ export type TicketMetaData = {
   linkedTickets: number[],
   ticket_id: number,
   assignedTo: string,
-  priority: string
+  priority: TicketPriorities,
+  ticketType: string
+}
+
+export enum TicketPriorities {
+  "Low"="Low",
+  "Medium"="Medium",
+  "High"="High",
+  "Critical"="Critical"
 }

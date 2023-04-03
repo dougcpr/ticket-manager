@@ -46,6 +46,7 @@ function TicketsDetails({selectedTicket}: any) {
           </TicketDetailsDescriptionHeader>
           <TicketDetailsTable tableData={selectedTicket}/>
         </TicketDetailsDescription>
+        <pre>{JSON.stringify(selectedTicket, null, 2)}</pre>
       </TicketDetailsContainer>
     )
   } else {
