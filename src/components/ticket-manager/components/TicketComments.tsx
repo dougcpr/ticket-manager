@@ -1,15 +1,12 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {Button, Textarea} from "@geist-ui/core";
-import {renderDate} from "@/lib/helpers/sharedFunctions";
 import {useFormik} from "formik";
 import {supabase} from "@/lib/supabaseClient";
-import Card from "@/components/core/Card";
 import {Ticket, TicketComments} from "@/features/ticket/models";
 import {Auth} from "@supabase/ui";
 import {PostgrestResponse} from "@supabase/supabase-js";
-
-const TicketCommentsContainer = styled.div``
+import moment from "moment";
 
 const TicketNewCommentSection = styled.div`
   padding-top: 1rem;
@@ -25,35 +22,60 @@ const TicketCommentHeader = styled.div`
 
 const TicketCommentsCard = styled.div``
 
-const TicketCommentCard = styled.div`
+const TicketCommentsContainer = styled.div`
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
   display: grid;
-  grid-row-gap: 1rem;
+  grid-gap: 1rem;
+  padding: 1rem;
+  max-height: 40vh;
+  overflow-y: scroll;
 `
 
-const TicketComment = styled(Card)`
-  display: grid;
-  grid-template-rows: 1fr 0.1fr;
-  grid-row-gap: 2rem;
-  grid-template-columns: 1fr;
+const TicketComment = styled.div`
+  color: white;
+  display: flex;
+  flex-direction: column;
 `
 
 const TicketCommentFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: black;
 `
 function TicketsComments({selectedTicket}: any) {
   const { user } = Auth.useUser()
+  const [ticket, setTicketData] = useState(selectedTicket)
+
+  useEffect(() => {
+    setTicketData(selectedTicket)
+  }, [selectedTicket])
+
+  function calculateCommentStyles(email: string) {
+    const style = {
+      width: "fit-content",
+      backgroundColor: '',
+      padding: "0.25rem",
+      borderRadius: "0.25rem"
+    }
+    style.backgroundColor = email === user?.email ? 'rgba(10, 132, 255, 1)' : 'rgba(44, 44, 46, 1)'
+    return style
+  }
+  function calculateCommentOrientation(email: string) {
+    return email === user?.email ? 'flex-end' : 'flex-start'
+  }
   function fetchTickets() {
     supabase
       .from('Tickets')
       .select(`
          *,
          TicketComments (*)`)
-      .eq('id', selectedTicket.id)
-      .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
+      .eq('id', ticket.id)
+      .order('created_at', { ascending: true, nullsFirst: false, foreignTable: 'TicketComments' })
       .then(({data}: PostgrestResponse<Ticket>) => {
+        console.log('new data', data)
         if (data) {
-          selectedTicket = data[0]
+          setTicketData(data[0])
         }
       })
   }
@@ -66,8 +88,8 @@ function TicketsComments({selectedTicket}: any) {
         await supabase.from('TicketComments')
           .insert([
             {
-              ticket_id: selectedTicket.id,
-              author: user?.email,
+              ticket_id: ticket.id,
+              authorEmail: user?.email,
               message: values.message
             }
           ])
@@ -79,28 +101,25 @@ function TicketsComments({selectedTicket}: any) {
     },
   });
   return (
-    <TicketCommentsContainer>
-      <TicketNewCommentSection>
-        <Textarea id="message" name="message" onChange={formik.handleChange} value={formik.values.message} placeholder="Enter a new comment." />
-        <Button style={{height: "100%"}} onClick={() => formik.handleSubmit()}>Submit</Button>
-      </TicketNewCommentSection>
+    <>
       <TicketCommentsCard>
         <TicketCommentHeader>Comments</TicketCommentHeader>
-        <TicketCommentCard>
-          {selectedTicket?.TicketComments.length ? selectedTicket?.TicketComments?.map((comment: TicketComments) => {
+        <TicketCommentsContainer>
+          {ticket?.TicketComments.length ? ticket?.TicketComments?.map((comment: TicketComments) => {
             return (
-              <TicketComment key={comment.id}>
-                <div key={comment.message}>Message: {comment.message}</div>
-                <TicketCommentFooter>
-                  <div key={comment.author}>Author: {comment.author}</div>
-                  <div key={comment.created_at}>Created: {renderDate(comment.created_at)}</div>
-                </TicketCommentFooter>
+              <TicketComment style={{alignItems: calculateCommentOrientation(comment.authorEmail)}} key={comment.id}>
+                <div style={calculateCommentStyles(comment.authorEmail)} key={comment.message}>{comment.message}</div>
+                <TicketCommentFooter>{moment(comment.created_at).format("MM/DD, h:mm:ss a")}</TicketCommentFooter>
               </TicketComment>
             )
           }) : <>No Comments.</>}
-        </TicketCommentCard>
+        </TicketCommentsContainer>
+        <TicketNewCommentSection>
+          <Textarea id="message" name="message" onChange={formik.handleChange} value={formik.values.message} placeholder="Enter a new comment." />
+          <Button style={{height: "100%"}} onClick={() => formik.handleSubmit()}>Submit</Button>
+        </TicketNewCommentSection>
       </TicketCommentsCard>
-    </TicketCommentsContainer>
+    </>
   )
 }
 

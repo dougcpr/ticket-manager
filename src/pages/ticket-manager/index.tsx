@@ -4,7 +4,7 @@ import {supabase} from "@/lib/supabaseClient";
 import {Button, Modal, Table, Text, Input, Spacer, Tabs} from "@geist-ui/core";
 import styled from "styled-components";
 import { useFormik } from 'formik';
-import {Ticket, TicketComments} from "@/features/ticket/models";
+import {Ticket, TicketComments, TicketPriorities} from "@/features/ticket/models";
 import {Auth} from "@supabase/ui";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsOverview from "@/components/ticket-manager/TicketOverview";
@@ -37,7 +37,7 @@ function TicketManager() {
   const [state, setState] = useState(false)
   useEffect(() => {
     fetchTickets()
-      .then((res) => {console.log("fetched tickets")})
+      .then((res) => {})
   }, [])
   async function fetchTickets() {
     let { data } = await supabase
@@ -56,18 +56,32 @@ function TicketManager() {
       title: '',
       description: '',
       status: 'Todo',
-      assignedUser: user?.email
+      TicketMetaData: {
+        laptopType: '',
+        reportedBy: user?.email,
+        ticket_id: 0,
+        assignedTo: '',
+        ticketType: '',
+        priority: TicketPriorities.Low
+      },
     },
     onSubmit: async (values: Partial<Ticket>) => {
       setState(false)
 
       try {
-        await supabase
+        const {data} = await supabase
           .from('Tickets')
           .insert([
             values,
           ])
-        await fetchTickets()
+        // TODO: Fix as next action item
+        // if (data?.id) {
+        //   values.TicketMetaData.ticket_id = data.id;
+        //   await supabase
+        //     .from('TicketMetaData')
+        //     .insert([values.TicketMetaData])
+        //   await fetchTickets()
+        // }
       } catch (err) {
         console.error(err)
       } finally {}

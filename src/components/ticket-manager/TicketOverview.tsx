@@ -42,31 +42,23 @@ function TicketsOverview({status}: any) {
   const [tickets, setTickets] = useState<Ticket[]>()
   const [selectedTicket, setSelectedTicket] = useState<Ticket>()
   useEffect(() => {
-    fetchTickets()
-      .then((res) => {console.log("fetched tickets")})
+    fetchTicketList()
+      .then((res) => {})
   }, [])
-  async function fetchTickets() {
+  async function fetchTicketList() {
     if (status !== null) {
       let { data } = await supabase
         .from('Tickets')
-        .select(`
-         *,
-         TicketMetaData (*),
-         TicketComments(*)`)
+        .select(`*`)
         .eq('status', status)
         .order('created_at')
-        .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
       if (data) setTickets(data)
     } else {
       let { data } = await supabase
         .from('Tickets')
-        .select(`
-         *,
-         TicketMetaData (*),
-         TicketComments(*)`)
+        .select(`*`)
         .neq('status', "Closed")
         .order('created_at')
-        .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
       if (data) setTickets(data)
     }
   }
@@ -83,6 +75,7 @@ function TicketsOverview({status}: any) {
          TicketMetaData (*),
          TicketComments(*)`)
       .eq('id', id)
+      .order('created_at', { ascending: true, nullsFirst: false, foreignTable: 'TicketComments' })
       .single()
     setSelectedTicket(data)
   }
