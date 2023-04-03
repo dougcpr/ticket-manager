@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {supabase} from "@/lib/supabaseClient";
 import {Ticket} from "@/features/ticket/models";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
-import {File} from "@geist-ui/icons";
+import TicketsDetails from "@/components/ticket-manager/components/TicketDetails";
 
 const TicketSection = styled.div`
   color: black;
@@ -38,42 +38,14 @@ const TicketListItem = styled.div`
   }
 `
 
-const TicketDetailsContainer = styled.div`
-  padding: 2rem;
-  display: grid;
-  grid-template-rows: 4rem 4rem 1fr 1fr 1fr;
-`
-
-const TicketDetailsHeader = styled.div`
-  display: grid;
-  grid-template-columns: 2rem 1fr;
-  align-items: center;
-`
-
-const TicketDetailsTitle = styled.div``
-
-const TicketDetailsDescription = styled.div``
-
-const TicketDetailsDescriptionHeader = styled.div`
-  font-weight: bold;
-  padding: 1rem 0;
-`
-
-const TicketDetailsLinkedTickets = styled.div``
-
-const TicketDetailsAttachments = styled.div``
-
 const TicketStatusSideMenu = styled.div`
   background-color: red;
   width: 100%;
   height: 1rem;
 `
 
-const TicketStatusTicketStatus = styled.div``
 
-const TicketStatusTicketHistory = styled.div``
-
-function TicketList() {
+function TicketsOverview() {
   const [tickets, setTickets] = useState<Ticket[]>()
   const [selectedTicket, setSelectedTicket] = useState<Ticket>()
   useEffect(() => {
@@ -85,8 +57,8 @@ function TicketList() {
       .from('Tickets')
       .select(`
          *,
-         TicketComments (*),
-         TicketMetaData (*)`)
+         TicketMetaData (*),
+         TicketComments(*)`)
       .neq('status', 'Closed')
       .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
     if (data) setTickets(data)
@@ -102,9 +74,6 @@ function TicketList() {
           <div>Ticket Name</div>
           <div>Created At</div>
         </TicketListHeader>
-        {/*  loop over tickets */}
-        {/*  create ticket cell item */}
-        {/*  on click, it should load ticket details to the right*/}
         {tickets && tickets.map((ticket: Ticket) => {
           return (
             <TicketListItem style={{backgroundColor: clickedTicket(ticket.id)}} onClick={() => setSelectedTicket(ticket)} key={ticket.id}>
@@ -114,34 +83,10 @@ function TicketList() {
           )
         })}
       </TicketListContainer>
-      {selectedTicket?.id && <TicketDetailsContainer>
-        <TicketDetailsHeader>
-            <File />
-            <p>HD-{selectedTicket?.id}</p>
-        </TicketDetailsHeader>
-        <TicketDetailsTitle>
-            <h3>{selectedTicket.title}</h3>
-            <hr/>
-        </TicketDetailsTitle>
-        <TicketDetailsDescription>
-            <TicketDetailsDescriptionHeader>
-                Description
-            </TicketDetailsDescriptionHeader>
-            <div>
-              {selectedTicket.description}
-            </div>
-            <TicketDetailsDescriptionHeader>
-                Information collected for this ticket
-            </TicketDetailsDescriptionHeader>
-            <div>
-              Name: {selectedTicket.reportedBy}
-            </div>
-        </TicketDetailsDescription>
-      </TicketDetailsContainer>}
-      {!selectedTicket?.id && <TicketDetailsContainer />}
+      <TicketsDetails selectedTicket={selectedTicket}/>
       <TicketStatusSideMenu />
     </TicketSection>
   )
 }
 
-export default TicketList
+export default TicketsOverview

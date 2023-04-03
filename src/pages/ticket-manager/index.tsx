@@ -7,8 +7,7 @@ import { useFormik } from 'formik';
 import {Ticket, TicketComments} from "@/features/ticket/models";
 import {Auth} from "@supabase/ui";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
-import Plus from "@geist-ui/icons/plus";
-import TicketList from "@/components/ticket-manager/TicketList";
+import TicketsOverview from "@/components/ticket-manager/TicketOverview";
 
 const TicketManagerContainer = styled.div`
   background-color: ${({theme}) => theme.secondaryBackgroundColor};
@@ -135,7 +134,7 @@ function TicketManager() {
           <TicketManagerTabsContainer>
             <Tabs initialValue="1">
               <Tabs.Item label="Open Tickets" value="1">
-                <TicketList />
+                <TicketsOverview />
               </Tabs.Item>
               <Tabs.Item label="Closed Tickets" value="2"></Tabs.Item>
             </Tabs>
