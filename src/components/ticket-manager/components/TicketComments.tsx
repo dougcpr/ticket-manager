@@ -12,9 +12,15 @@ import {PostgrestResponse} from "@supabase/supabase-js";
 const TicketCommentsContainer = styled.div``
 
 const TicketNewCommentSection = styled.div`
+  padding-top: 1rem;
   display: grid;
   grid-template-columns: 1fr 0.1fr;
   grid-column-gap: 1rem;
+`
+
+const TicketCommentHeader = styled.div`
+  font-weight: bold;
+  padding: 1rem 0;
 `
 
 const TicketCommentsCard = styled.div``
@@ -47,8 +53,7 @@ function TicketsComments({selectedTicket}: any) {
       .order('created_at', { ascending: false, nullsFirst: false, foreignTable: 'TicketComments' })
       .then(({data}: PostgrestResponse<Ticket>) => {
         if (data) {
-          // @ts-ignore
-          setTicket(data[0])
+          selectedTicket = data[0]
         }
       })
   }
@@ -80,9 +85,9 @@ function TicketsComments({selectedTicket}: any) {
         <Button style={{height: "100%"}} onClick={() => formik.handleSubmit()}>Submit</Button>
       </TicketNewCommentSection>
       <TicketCommentsCard>
-        <div>Comments</div>
+        <TicketCommentHeader>Comments</TicketCommentHeader>
         <TicketCommentCard>
-          {selectedTicket?.TicketComments?.map((comment: TicketComments) => {
+          {selectedTicket?.TicketComments.length ? selectedTicket?.TicketComments?.map((comment: TicketComments) => {
             return (
               <TicketComment key={comment.id}>
                 <div key={comment.message}>Message: {comment.message}</div>
@@ -92,7 +97,7 @@ function TicketsComments({selectedTicket}: any) {
                 </TicketCommentFooter>
               </TicketComment>
             )
-          })}
+          }) : <>No Comments.</>}
         </TicketCommentCard>
       </TicketCommentsCard>
     </TicketCommentsContainer>
