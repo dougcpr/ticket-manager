@@ -8,8 +8,6 @@ import {Auth} from "@supabase/ui";
 import {Archive, Inbox, Settings} from "@geist-ui/icons";
 
 const NavBar = styled.div`
-  color: white;
-  background-color: #1a1f36;
   align-items: center;
   box-sizing: border-box;
   display: flex;
@@ -18,7 +16,6 @@ const NavBar = styled.div`
 `;
 
 const AppContainer = styled.div`
-  background-color: ${({theme}) => theme.body};
   display: grid;
   grid-template-rows: 4rem 1fr;
 `
@@ -29,7 +26,6 @@ const NavBarContainer = styled.div`
 `
 
 const SideNavBar = styled.div`
-  background-color: #1a1f36;
   align-items: center;
   display: flex;
   flex-direction: column;

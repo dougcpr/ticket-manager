@@ -32,7 +32,8 @@ const TicketListItem = styled.div`
   height: 3rem;
   width: 100%;
   :hover {
-    background-color: ${({theme}) => theme.colors.onHover};
+    background-color: white;
+    color: black;
     cursor: pointer;
   }
 `
