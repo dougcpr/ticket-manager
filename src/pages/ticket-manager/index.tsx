@@ -146,14 +146,7 @@ function TicketManager() {
       <TicketManagerContainer>
         <TicketManagerHeader>
           <TicketManagerTabsContainer>
-            <Tabs initialValue="1">
-              <Tabs.Item label="Open Tickets" value="1">
-                <TicketsOverview status={null}/>
-              </Tabs.Item>
-              <Tabs.Item label="Closed Tickets" value="2">
-                <TicketsOverview status="Closed"/>
-              </Tabs.Item>
-            </Tabs>
+            <TicketsOverview/>
           </TicketManagerTabsContainer>
           {/*<TicketManagerActions>*/}
           {/*  /!*Create this as a FAB icon*!/*/}

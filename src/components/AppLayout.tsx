@@ -2,18 +2,10 @@ import {FC} from 'react';
 import {useRouter} from "next/router";
 import styled from 'styled-components';
 import LogOut from "@geist-ui/icons/logOut";
-import {Button, Input, Spacer} from "@geist-ui/core";
+import {Button, Spacer} from "@geist-ui/core";
 import {supabase} from "@/lib/supabaseClient";
 import {Auth} from "@supabase/ui";
-import {Archive, Inbox, Settings} from "@geist-ui/icons";
-
-const NavBar = styled.div`
-  align-items: center;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  height: 4rem;
-`;
+import {Inbox, Settings} from "@geist-ui/icons";
 
 const AppContainer = styled.div`
   display: grid;
@@ -76,7 +68,6 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
               <SideNavBarNavigationButtons>
                 {/*TODO: MAKE LOOPED TEMPLATE OBJECT */}
                 <Button onClick={() => router.push('/ticket-manager')} style={{backgroundColor: determineButtonBackgroundColor('/ticket-manager'), border: 0}} iconRight={<Inbox />} auto scale={1} />
-                <Button onClick={() => router.push('/archive')} style={{backgroundColor: determineButtonBackgroundColor('/archive'), border: 0}} iconRight={<Archive />} auto scale={1} />
                 <Button onClick={() => router.push('/settings')} style={{backgroundColor: determineButtonBackgroundColor('/settings'), border: 0}} iconRight={<Settings />} auto scale={1} />
               </SideNavBarNavigationButtons>
               <SideNavBarOperationalButtons>
@@ -86,9 +77,6 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
             <Spacer h={3}/>
           </SideNavBar>
           <AppContainer>
-            <NavBar>
-              <h2>Help Desk</h2>
-            </NavBar>
             {children}
           </AppContainer>
         </NavBarContainer>

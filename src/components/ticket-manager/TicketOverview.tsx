@@ -38,7 +38,7 @@ const TicketListItem = styled.div`
   }
 `
 
-function TicketsOverview({status}: any) {
+function TicketsOverview() {
   const [tickets, setTickets] = useState<Ticket[]>()
   const [selectedTicket, setSelectedTicket] = useState<Ticket>()
   useEffect(() => {
@@ -46,21 +46,11 @@ function TicketsOverview({status}: any) {
       .then((res) => {})
   }, [])
   async function fetchTicketList() {
-    if (status !== null) {
-      let { data } = await supabase
-        .from('Tickets')
-        .select(`*`)
-        .eq('status', status)
-        .order('created_at')
-      if (data) setTickets(data)
-    } else {
-      let { data } = await supabase
-        .from('Tickets')
-        .select(`*`)
-        .neq('status', "Closed")
-        .order('created_at')
-      if (data) setTickets(data)
-    }
+    let { data } = await supabase
+      .from('Tickets')
+      .select(`*`)
+      .order('created_at')
+    if (data) setTickets(data)
   }
 
   function changeTicketBackground(id: number) {
