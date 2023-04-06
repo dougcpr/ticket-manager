@@ -14,9 +14,10 @@ const TicketNewCommentSection = styled.div`
   grid-column-gap: 1rem;
 `
 
-const TicketCommentHeader = styled.div`
-  font-weight: bold;
-  padding: 1rem 0;
+const TicketHeader = styled.div`
+  font-weight: 500;
+  line-height: 32px;
+  text-transform: uppercase;
 `
 
 const TicketActivityCard = styled.div``
@@ -127,7 +128,7 @@ function TicketActivities({selectedTicket}: any) {
   return (
     <>
       <TicketActivityCard>
-        <TicketCommentHeader>Activity</TicketCommentHeader>
+        <TicketHeader>Activity</TicketHeader>
         <TicketActivityContainer>
           {ticket?.TicketActivity.length ? ticket?.TicketActivity?.map((comment: TicketActivity) => {
             return (

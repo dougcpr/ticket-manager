@@ -4,7 +4,6 @@ import {supabase} from "@/lib/supabaseClient";
 import {Ticket} from "@/features/ticket/models";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsDetails from "@/components/ticket-manager/components/TicketDetails";
-import TicketStatus from "@/components/ticket-manager/components/TicketStatus";
 import {Circle, CheckInCircle} from '@geist-ui/icons'
 
 const DashCircle = styled.div`
@@ -16,13 +15,14 @@ const DashCircle = styled.div`
 `
 const TicketSection = styled.div`
   display: grid;
-  grid-template-columns: 25rem 1fr 25rem;
+  grid-template-columns: 25rem 1fr;
   height: 100vh;
   width: 100%;
 `
 
 const TicketListContainer = styled.div`
   border-right: 1px solid #2a2b39;
+  max-width: 25rem;
 `
 
 const TicketListRow = styled.div`
@@ -129,7 +129,6 @@ function TicketsOverview() {
         })}
       </TicketListContainer>
       <TicketsDetails selectedTicket={selectedTicket}/>
-      <TicketStatus selectedTicket={selectedTicket}/>
     </TicketSection>
   )
 }

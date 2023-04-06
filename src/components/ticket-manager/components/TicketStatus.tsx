@@ -1,28 +1,22 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {Select} from "@geist-ui/core";
-import {supabase} from "@/lib/supabaseClient";
 import {Employee, TicketPriorities} from "@/features/ticket/models";
+import {supabase} from "@/lib/supabaseClient";
 import {PostgrestResponse} from "@supabase/supabase-js";
 
-const TicketStatusContainer = styled.div`
+const TicketSection = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(6, 5rem);
-  background-color: #2a2b39;
-  padding: 2rem;
-  border-left: 1px solid #26283b;
 `
 
-const TicketStatusHeader = styled.div`
+const TicketHeader = styled.div`
   font-weight: 500;
   line-height: 32px;
   text-transform: uppercase;
 `
-function TicketStatus({selectedTicket}: any) {
+function TicketStatus({selectedTicket} : any) {
   const [users, setUsers] = useState<any>()
-
-
   useEffect(() => {
     supabase
       .from("Employees")
@@ -40,10 +34,11 @@ function TicketStatus({selectedTicket}: any) {
       .update(tempObj)
       .eq('id', id)
   }
-  if (selectedTicket?.id) {
-    return (
-      <TicketStatusContainer>
-        <TicketStatusHeader>Ticket</TicketStatusHeader>
+
+  return (
+    <TicketSection>
+      <div>
+        <TicketHeader>Ticket</TicketHeader>
         <Select value={selectedTicket?.status} onChange={async (value) => {await updateTicketData(value, 'status', selectedTicket.id)}}>
           <Select.Option value="Todo">Todo</Select.Option>
           <Select.Option value="In Progress">In Progress</Select.Option>
@@ -51,13 +46,17 @@ function TicketStatus({selectedTicket}: any) {
           <Select.Option value="Waiting on Customer">Waiting on Customer</Select.Option>
           <Select.Option value="Closed">Closed</Select.Option>
         </Select>
-        <TicketStatusHeader>Type</TicketStatusHeader>
+      </div>
+      <div>
+        <TicketHeader>Type</TicketHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'ticketType', selectedTicket?.id)}}  value={selectedTicket?.ticketType}>
           <Select.Option value="task">Task</Select.Option>
           <Select.Option value="bug">Bug</Select.Option>
           <Select.Option value="improvement">Improvement</Select.Option>
         </Select>
-        <TicketStatusHeader>Assignee</TicketStatusHeader>
+      </div>
+      <div>
+        <TicketHeader>Assignee</TicketHeader>
         <Select onChange={async (value) => await updateTicketData(Number(value), 'assignedTo', selectedTicket?.id)} value={selectedTicket?.assignedTo.id.toString()}>
           {users && users.map((user: Employee) => {
             return (
@@ -65,18 +64,18 @@ function TicketStatus({selectedTicket}: any) {
             )
           })}
         </Select>
-        <TicketStatusHeader>Priority</TicketStatusHeader>
+      </div>
+      <div>
+        <TicketHeader>Priority</TicketHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'priority', selectedTicket?.id)}}  value={selectedTicket?.priority}>
           <Select.Option value={TicketPriorities.Low}>{TicketPriorities.Low}</Select.Option>
           <Select.Option value={TicketPriorities.Medium}>{TicketPriorities.Medium}</Select.Option>
           <Select.Option value={TicketPriorities.High}>{TicketPriorities.High}</Select.Option>
           <Select.Option value={TicketPriorities.Critical}>{TicketPriorities.Critical}</Select.Option>
         </Select>
-      </TicketStatusContainer>
-    )
-  } else {
-    return <></>
-  }
+      </div>
+    </TicketSection>
+  )
 }
 
 export default TicketStatus
