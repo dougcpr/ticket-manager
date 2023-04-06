@@ -82,12 +82,16 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
     initialValues: {
       title: '',
       description: '',
-      status: 'Todo'
+      status: 'Todo',
+      reportedBy: '',
+      linkedTickets: [],
+      assignedTo: '',
+      ticketType: ''
     },
     onSubmit: async (values: Partial<Ticket>) => {
       setState(false)
       try {
-        const {data} : any = await supabase
+        const {data} = await supabase
           .from('Tickets')
           .insert([
             values,

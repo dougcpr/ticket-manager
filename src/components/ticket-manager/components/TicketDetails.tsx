@@ -50,6 +50,7 @@ function TicketsDetails({selectedTicket}: any) {
           <h3>{selectedTicket.title}</h3>
           <hr/>
         </TicketDetailsTitle>
+        Reported By: {selectedTicket.reportedBy.name}
         <TicketDetailsDescription>
           <TicketDetailsDescriptionHeader>
             Description
@@ -60,9 +61,6 @@ function TicketsDetails({selectedTicket}: any) {
                     id="description"
                     name="description"
                     value={description} />
-          <TicketDetailsDescriptionHeader>
-            Information collected for this ticket
-          </TicketDetailsDescriptionHeader>
           <TicketActivities selectedTicket={selectedTicket}/>
         </TicketDetailsDescription>
       </TicketDetailsContainer>

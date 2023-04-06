@@ -4,8 +4,13 @@ export type Ticket = {
   description: string,
   status: string,
   title: string,
+  reportedBy: string | undefined,
+  assignedTo: string,
+  priority: TicketPriorities,
+  linkedTickets?: number[],
+  ticketType: string
   TicketActivity: TicketActivity[]
-  TicketMetaData: TicketMetaData
+
 }
 
 export type TicketActivity = {
@@ -14,18 +19,6 @@ export type TicketActivity = {
   created_at?: string,
   message: string,
   ticket_id: number
-}
-
-export type TicketMetaData = {
-  id?: number,
-  reportedBy: string | undefined,
-  created_at?: string,
-  laptopType: string,
-  linkedTickets?: number[],
-  ticket_id: number,
-  assignedTo: string,
-  priority: TicketPriorities,
-  ticketType: string
 }
 
 export enum TicketPriorities {

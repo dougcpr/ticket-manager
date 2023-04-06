@@ -16,7 +16,6 @@ const TicketManagerHeader = styled.div`
   justify-content: space-between;
 `
 
-// @ts-ignore
 function TicketManager() {
   const [tickets, setTickets] = useState<Ticket[]>()
   const router = useRouter()

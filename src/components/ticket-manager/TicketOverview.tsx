@@ -76,7 +76,7 @@ function TicketsOverview() {
     // TODO
     let { data }: any  = await supabase
       .from('Tickets')
-      .select(`*`)
+      .select(`id, title, description, status, created_at`)
       .order('created_at')
     if (data) setTickets(data)
   }
@@ -93,8 +93,16 @@ function TicketsOverview() {
     let { data }: any  = await supabase
       .from('Tickets')
       .select(`
-         *,
-         TicketMetaData (*),
+         id,
+         created_at,
+         description,
+         title,
+         status,
+         reportedBy:Employees!Tickets_reportedBy_fkey(id, name),
+         linkedTickets,
+         ticketType,
+         priority,
+         assignedTo:Employees!Tickets_assignedTo_fkey(id, name),
          TicketActivity(*)`)
       .eq('id', id)
       .order('created_at', { ascending: true, nullsFirst: false, foreignTable: 'TicketActivity' })
