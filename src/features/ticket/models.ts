@@ -4,13 +4,13 @@ export type Ticket = {
   description: string,
   status: string,
   title: string,
-  TicketComments: TicketComments[]
+  TicketActivity: TicketActivity[]
   TicketMetaData: TicketMetaData
 }
 
-export type TicketComments = {
+export type TicketActivity = {
   id?: number,
-  authorEmail: string,
+  author: string,
   created_at?: string,
   message: string,
   ticket_id: number
@@ -33,4 +33,10 @@ export enum TicketPriorities {
   "Medium"="Medium",
   "High"="High",
   "Critical"="Critical"
+}
+
+export type Employee = {
+  id?: number,
+  name: string,
+  email: string
 }

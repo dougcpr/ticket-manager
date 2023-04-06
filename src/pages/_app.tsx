@@ -9,7 +9,8 @@ import AppLayout from "@/components/AppLayout";
 const theme = Themes.createFromDark({
   type: 'darkTheme',
   palette: {
-    success: '#000',
+    background: '#191a23',
+    success: '#292a35'
   },
 })
 export default function App({ Component, pageProps }: AppProps) {

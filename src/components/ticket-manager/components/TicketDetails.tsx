@@ -1,12 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import {File} from "@geist-ui/icons";
-import TicketDetailsTable from "@/components/ticket-manager/components/TicketDetailsTable";
-import TicketsComments from "@/components/ticket-manager/components/TicketComments";
+import TicketActivities from "@/components/ticket-manager/components/TicketActivities";
+import {Textarea} from "@geist-ui/core";
+import {useFormik} from "formik";
+import {supabase} from "@/lib/supabaseClient";
 
 const TicketDetailsContainer = styled.div`
   min-height: 1rem;
   padding: 2rem;
+  color: white;
 `
 
 const TicketDetailsHeader = styled.div`
@@ -24,6 +27,18 @@ const TicketDetailsDescriptionHeader = styled.div`
   padding: 1rem 0;
 `
 function TicketsDetails({selectedTicket}: any) {
+  const formik = useFormik({
+    initialValues: {
+      description: selectedTicket?.description
+    },
+    onSubmit: async () => {
+      await supabase
+        .from('Tickets')
+        .update({ description: formik.values.description})
+        .eq('id', selectedTicket.id)
+    }
+  })
+
   if (selectedTicket?.id) {
     return (
       <TicketDetailsContainer>
@@ -39,14 +54,17 @@ function TicketsDetails({selectedTicket}: any) {
           <TicketDetailsDescriptionHeader>
             Description
           </TicketDetailsDescriptionHeader>
-          <div>
-            {selectedTicket.description}
-          </div>
+          <Textarea width={100}
+                    onBlur={formik.submitForm}
+                    onChange={formik.handleChange}
+                    id="description"
+                    name="description"
+                    initialValue={selectedTicket?.description}
+                    value={formik.values.description} />
           <TicketDetailsDescriptionHeader>
             Information collected for this ticket
           </TicketDetailsDescriptionHeader>
-          <TicketDetailsTable tableData={selectedTicket}/>
-          <TicketsComments selectedTicket={selectedTicket}/>
+          <TicketActivities selectedTicket={selectedTicket}/>
         </TicketDetailsDescription>
       </TicketDetailsContainer>
     )

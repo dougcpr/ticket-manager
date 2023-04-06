@@ -6,9 +6,12 @@ import {TicketPriorities} from "@/features/ticket/models";
 import {PostgrestResponse} from "@supabase/supabase-js";
 
 const TicketStatusContainer = styled.div`
-  padding-top: 2rem;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(6, 5rem);
+  background-color: #2a2b39;
+  padding: 2rem;
+  border-left: 1px solid #26283b;
 `
 
 const TicketStatusHeader = styled.div`
@@ -25,7 +28,6 @@ function TicketStatus({selectedTicket}: any) {
       .from("Employees")
       .select("*")
       .then(({data}: PostgrestResponse<any>) => {
-        console.log(data)
         setUsers(data)
       })
   }, [])
@@ -41,7 +43,7 @@ function TicketStatus({selectedTicket}: any) {
   if (selectedTicket?.id) {
     return (
       <TicketStatusContainer>
-        <TicketStatusHeader>Ticket Status</TicketStatusHeader>
+        <TicketStatusHeader>Ticket</TicketStatusHeader>
         <Select value={selectedTicket?.status} onChange={async (value) => {await updateTicketData(value, 'status', 'Tickets', selectedTicket.id)}}>
           <Select.Option value="Todo">Todo</Select.Option>
           <Select.Option value="In Progress">In Progress</Select.Option>
@@ -49,20 +51,19 @@ function TicketStatus({selectedTicket}: any) {
           <Select.Option value="Waiting on Customer">Waiting on Customer</Select.Option>
           <Select.Option value="Closed">Closed</Select.Option>
         </Select>
-        <TicketStatusHeader>Ticket Type</TicketStatusHeader>
+        <TicketStatusHeader>Type</TicketStatusHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'ticketType', 'TicketMetaData', selectedTicket?.TicketMetaData[0].id)}}  value={selectedTicket?.TicketMetaData[0].ticketType}>
           <Select.Option value="task">Task</Select.Option>
           <Select.Option value="bug">Bug</Select.Option>
           <Select.Option value="improvement">Improvement</Select.Option>
         </Select>
-        <TicketStatusHeader>Assigned To</TicketStatusHeader>
+        <TicketStatusHeader>Assignee</TicketStatusHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'assignedTo', 'TicketMetaData', selectedTicket?.TicketMetaData[0].id)}}  value={selectedTicket?.TicketMetaData[0].assignedTo}>
           {users && users.map((user: any) => {
             return (
               <Select.Option key={user.id} value={user.email}>{user.name}</Select.Option>
             )
           })}
-
         </Select>
         <TicketStatusHeader>Priority</TicketStatusHeader>
         <Select onChange={async (value) => {await updateTicketData(value, 'priority', 'TicketMetaData', selectedTicket?.TicketMetaData[0].id)}}  value={selectedTicket?.TicketMetaData[0].priority}>

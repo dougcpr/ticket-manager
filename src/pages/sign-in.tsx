@@ -64,9 +64,9 @@ function SignIn() {
         <Spacer h={2}/>
         <Input.Password id="password" name="password" placeholder="" label="Password" width="100%" onChange={formik.handleChange} value={formik.values.password}/>
         <Spacer h={2}/>
-        <Button style={{width: "100%"}} onClick={() => formik.handleSubmit()}>Login</Button>
+        <Button type="success" style={{width: "100%"}} onClick={() => formik.handleSubmit()}>Login</Button>
         <Spacer h={0.5}/>
-        <Button style={{width: "100%"}} onClick={() => router.push('/sign-up')}>Sign Up</Button>
+        <Button type="success" style={{width: "100%"}} onClick={() => router.push('/sign-up')}>Sign Up</Button>
         <Spacer h={0.5}/>
         <ButtonGroup style={{ margin: "0.25rem 0", display: "flex"}}>
           <Button style={{ width: "100%", display: "grid", alignItems: "center"}} type="secondary" ghost onClick={() => signInWithGithub()}><Github /></Button>

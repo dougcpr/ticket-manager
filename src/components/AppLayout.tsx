@@ -7,17 +7,13 @@ import {supabase} from "@/lib/supabaseClient";
 import {Auth} from "@supabase/ui";
 import {Inbox, Settings} from "@geist-ui/icons";
 
-const AppContainer = styled.div`
-  display: grid;
-  grid-template-rows: 4rem 1fr;
-`
-
 const NavBarContainer = styled.div`
   display: grid;
   grid-template-columns: 4rem 1fr;
 `
 
 const SideNavBar = styled.div`
+  border-right: 1px solid #2a2b39;
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -48,7 +44,7 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
 
   function determineButtonBackgroundColor(path: string) {
     if (router.pathname === path) {
-      return "white"
+      return "#272832"
     } else {
       return "transparent"
     }
@@ -63,12 +59,20 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
       <div>
         <NavBarContainer>
           <SideNavBar>
-            <Spacer h={7}/>
+            <Spacer h={1}/>
             <SideNavBarButtonContainer>
               <SideNavBarNavigationButtons>
                 {/*TODO: MAKE LOOPED TEMPLATE OBJECT */}
-                <Button onClick={() => router.push('/ticket-manager')} style={{backgroundColor: determineButtonBackgroundColor('/ticket-manager'), border: 0}} iconRight={<Inbox />} auto scale={1} />
-                <Button onClick={() => router.push('/settings')} style={{backgroundColor: determineButtonBackgroundColor('/settings'), border: 0}} iconRight={<Settings />} auto scale={1} />
+                <Button
+                  onClick={() => router.push('/ticket-manager')} style={{backgroundColor: determineButtonBackgroundColor('/ticket-manager'), border: 0}}
+                  iconRight={<Inbox color="#858699" />}
+                  auto
+                  scale={1} />
+                <Button
+                  onClick={() => router.push('/settings')} style={{backgroundColor: determineButtonBackgroundColor('/settings'), border: 0}}
+                  iconRight={<Settings color="#858699"/>}
+                  auto
+                  scale={1} />
               </SideNavBarNavigationButtons>
               <SideNavBarOperationalButtons>
                 <Button onClick={signOut} style={{backgroundColor: "transparent", border: 0}} iconRight={<LogOut />} auto scale={1} />
@@ -76,9 +80,7 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
             </SideNavBarButtonContainer>
             <Spacer h={3}/>
           </SideNavBar>
-          <AppContainer>
-            {children}
-          </AppContainer>
+          {children}
         </NavBarContainer>
       </div>
     );

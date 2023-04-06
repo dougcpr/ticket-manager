@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "@/lib/supabaseClient";
-import {Button, Modal, Table, Text, Input, Spacer, Tabs} from "@geist-ui/core";
+import {Button, Modal, Text, Input, Spacer} from "@geist-ui/core";
 import styled from "styled-components";
 import { useFormik } from 'formik';
-import {Ticket, TicketComments, TicketPriorities} from "@/features/ticket/models";
+import {Ticket, TicketActivity, TicketPriorities} from "@/features/ticket/models";
 import {Auth} from "@supabase/ui";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsOverview from "@/components/ticket-manager/TicketOverview";
@@ -15,16 +15,6 @@ const TicketManagerContainer = styled.div`
 `
 
 const TicketManagerHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
-
-const TicketManagerTabsContainer = styled.div`
-  width: 100%;
-  margin-right: 2rem;
-`
-
-const TicketManagerActions = styled.div`
   display: flex;
   justify-content: space-between;
 `
@@ -89,29 +79,17 @@ function TicketManager() {
     },
   });
 
-  const renderDateWithText = (value: string | undefined) => {
-    return <Text>{renderDate(value)}</Text>
-  }
-
-  const renderActions = (value: string | number | TicketComments[], rowData: Ticket, index: number) => {
+  const renderActions = (value: string | number | TicketActivity[], rowData: Ticket, index: number) => {
     const navigateToTicket = () => {
       router.push(`/ticket-manager/ticket/${value}`)
     }
     const deleteTicket = async () => {
       try {
-        // delete ticket comments first
-        await supabase
-          .from('TicketComments')
-          .delete()
-          .eq('ticket_id', value)
-        // then delete ticket
         await supabase
           .from('Tickets')
           .delete()
           .eq('id', value)
-        // remove ticket from table data source without re-fetching
         setTickets((last: Ticket[] | null | undefined) => last?.filter((_: Ticket, dataIndex: number) => dataIndex !== index))
-
       } catch (err) {
         console.error(err)
       } finally {}
@@ -145,9 +123,7 @@ function TicketManager() {
       // </TicketManagerContainer>
       <TicketManagerContainer>
         <TicketManagerHeader>
-          <TicketManagerTabsContainer>
-            <TicketsOverview/>
-          </TicketManagerTabsContainer>
+          <TicketsOverview/>
           {/*<TicketManagerActions>*/}
           {/*  /!*Create this as a FAB icon*!/*/}
           {/*  <Button icon={<Plus />} onClick={handler}>Create Ticket</Button>*/}
