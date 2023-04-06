@@ -84,7 +84,6 @@ function TicketActivities({selectedTicket}: any) {
       .select(`*`)
       .eq('email', user?.email)
       .then(({data}: PostgrestResponse<Employee>) => {
-        console.log('user data', data)
         if (data) {
           setUserData(data[0])
         }

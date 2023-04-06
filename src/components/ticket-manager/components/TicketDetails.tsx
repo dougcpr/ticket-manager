@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {File} from "@geist-ui/icons";
 import TicketActivities from "@/components/ticket-manager/components/TicketActivities";
@@ -27,17 +27,17 @@ const TicketDetailsDescriptionHeader = styled.div`
   padding: 1rem 0;
 `
 function TicketsDetails({selectedTicket}: any) {
-  const formik = useFormik({
-    initialValues: {
-      description: selectedTicket?.description
-    },
-    onSubmit: async () => {
-      await supabase
-        .from('Tickets')
-        .update({ description: formik.values.description})
-        .eq('id', selectedTicket.id)
-    }
-  })
+  const [description, setDescription] = useState<string>()
+  // TODO: this feels bad
+  useEffect(() => {
+    setDescription(selectedTicket.description)
+  }, [selectedTicket])
+  async function submitTicket() {
+    await supabase
+      .from('Tickets')
+      .update({ description })
+      .eq('id', selectedTicket.id)
+  }
 
   if (selectedTicket?.id) {
     return (
@@ -55,12 +55,11 @@ function TicketsDetails({selectedTicket}: any) {
             Description
           </TicketDetailsDescriptionHeader>
           <Textarea width={100}
-                    onBlur={formik.submitForm}
-                    onChange={formik.handleChange}
+                    onBlur={submitTicket}
+                    onChange={(e) => setDescription(e.target.value)}
                     id="description"
                     name="description"
-                    initialValue={selectedTicket?.description}
-                    value={formik.values.description} />
+                    value={description} />
           <TicketDetailsDescriptionHeader>
             Information collected for this ticket
           </TicketDetailsDescriptionHeader>
