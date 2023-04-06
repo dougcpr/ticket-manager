@@ -73,11 +73,11 @@ function TicketsOverview() {
       .then((res) => {})
   }, [])
   async function fetchTicketList() {
+    // TODO
     let { data }: any  = await supabase
       .from('Tickets')
       .select(`*`)
       .order('created_at')
-    console.log(data)
     if (data) setTickets(data)
   }
 

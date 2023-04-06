@@ -28,60 +28,6 @@ function TicketManager() {
   const router = useRouter()
   const [state, setState] = useState(false)
   const supabase = useSupabaseClient()
-  const user = useUser()
-  // useEffect(() => {
-  //   fetchTickets()
-  //     .then((res) => {})
-  // }, [])
-  // async function fetchTickets() {
-  //   let { data } = await supabase
-  //     .from('Tickets')
-  //     .select('*')
-  //   if (data) setTickets(data)
-  // }
-
-  const handler = () => setState(true)
-  const closeHandler = () => {
-    setState(false)
-  }
-
-  const formik = useFormik({
-    initialValues: {
-      title: '',
-      description: '',
-      status: 'Todo',
-      TicketMetaData: {
-        laptopType: '',
-        reportedBy: user?.email,
-        ticket_id: 0,
-        assignedTo: '',
-        ticketType: '',
-        priority: TicketPriorities.Low
-      },
-    },
-    onSubmit: async (values: Partial<Ticket>) => {
-      setState(false)
-
-      try {
-        const {data} = await supabase
-          .from('Tickets')
-          .insert([
-            values,
-          ])
-        // TODO: Fix as next action item
-        // if (data?.id) {
-        //   values.TicketMetaData.ticket_id = data.id;
-        //   await supabase
-        //     .from('TicketMetaData')
-        //     .insert([values.TicketMetaData])
-        //   await fetchTickets()
-        // }
-      } catch (err) {
-        console.error(err)
-      } finally {}
-      formik.handleReset({})
-    },
-  });
 
   const renderActions = (value: string | number | TicketActivity[], rowData: Ticket, index: number) => {
     const navigateToTicket = () => {
@@ -107,45 +53,11 @@ function TicketManager() {
 
     )
   }
-  // TODO: Awful practice
     return (
-      // <TicketManagerContainer>
-      //   <TicketManagerHeader>
-      //     <Button onClick={handler}>Create Ticket</Button>
-      //   </TicketManagerHeader>
-      //   <Table data={tickets}>
-      //       <Table.Column prop="title" label="title" />
-      //       <Table.Column prop="status" label="status" />
-      //       <Table.Column prop="assignedUser" label="Assignee" />
-      //       <Table.Column prop="description" label="description" />
-      //       <Table.Column prop="created_at" label="Created At" render={renderDateWithText}/>
-      //       <Table.Column prop="id" label="Operation" render={renderActions}/>
-      //   </Table>
-      //
-      //
-      // </TicketManagerContainer>
       <TicketManagerContainer>
         <TicketManagerHeader>
           <TicketsOverview/>
-          {/*<TicketManagerActions>*/}
-          {/*  /!*Create this as a FAB icon*!/*/}
-          {/*  <Button icon={<Plus />} onClick={handler}>Create Ticket</Button>*/}
-          {/*</TicketManagerActions>*/}
         </TicketManagerHeader>
-        <div>
-          <Modal visible={state} onClose={closeHandler}>
-            <Modal.Title>Create Ticket</Modal.Title>
-            <Modal.Content>
-              <form>
-                <Input id="title" name="title" label="Name" placeholder="" onChange={formik.handleChange} value={formik.values.title}/>
-                <Spacer h={2}/>
-                <Input id="description" name="description" label="Description" placeholder="" onChange={formik.handleChange} value={formik.values.description}/>
-              </form>
-            </Modal.Content>
-            <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
-            <Modal.Action onClick={() => formik.handleSubmit()}>Submit</Modal.Action>
-          </Modal>
-        </div>
       </TicketManagerContainer>
     )
 }
