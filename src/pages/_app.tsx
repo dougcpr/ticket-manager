@@ -1,8 +1,8 @@
 import type { AppProps } from 'next/app'
 import {GeistProvider, CssBaseline, Themes} from '@geist-ui/core'
-import { supabase } from "@/lib/supabaseClient";
-import { Auth } from '@supabase/ui'
+import {SessionContextProvider} from '@supabase/auth-helpers-react'
 import React from "react";
+import {supabase} from "@/lib/supabaseClient";
 import {GlobalStyles} from "@/lib/global-styles";
 import AppLayout from "@/components/AppLayout";
 
@@ -14,9 +14,11 @@ const theme = Themes.createFromDark({
   },
 })
 export default function App({ Component, pageProps }: AppProps) {
-
   return (
-      <Auth.UserContextProvider supabaseClient={supabase}>
+    <SessionContextProvider
+      supabaseClient={supabase}
+      initialSession={pageProps.initialSession}
+    >
         <GeistProvider themes={[theme]} themeType="darkTheme">
           <GlobalStyles />
           <CssBaseline />
@@ -24,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </AppLayout>
         </GeistProvider>
-      </Auth.UserContextProvider>
+    </SessionContextProvider>
   )
 
 }

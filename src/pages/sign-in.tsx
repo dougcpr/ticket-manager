@@ -1,9 +1,8 @@
-import React from "react";
+import React, {FC} from "react";
 import {Button, Input, Spacer, Card, ButtonGroup} from "@geist-ui/core";
 import {useRouter} from "next/router";
 import { useFormik } from 'formik';
 import {supabase} from "@/lib/supabaseClient";
-import styled from "styled-components";
 import Github from "@geist-ui/icons/github";
 import Facebook from "@geist-ui/icons/facebook";
 import Youtube from "@geist-ui/icons/youtube";
@@ -14,23 +13,9 @@ type LoginCredentials = {
   password: string
 }
 
-const CenterLayout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  place-items: center;
-  -webkit-box-align: center;
-  height: 100vh;
-  width: 100%;
-`
-
-const LoginCard = styled(Card)`
-  width: 20rem;
-  margin: 2rem;
-`
-
 async function signInWithGithub() {
   try {
-    await supabase.auth.signIn({
+    await supabase.auth.signInWithOAuth({
       provider: 'github'
     })
   } catch (e) {
@@ -38,7 +23,11 @@ async function signInWithGithub() {
   }
 }
 
-function SignIn() {
+type AppLayoutProps = {
+  setSession: any;
+};
+
+const SignIn: FC<AppLayoutProps> = ({setSession}) => {
   const router = useRouter()
   const formik = useFormik({
     initialValues: {
@@ -47,8 +36,8 @@ function SignIn() {
     },
     onSubmit: async (values: LoginCredentials) => {
       try {
-        const { user, session, error } = await supabase.auth.signIn(values);
-        if (session) await router.push('/')
+        const { data, error } = await supabase.auth.signInWithPassword(values);
+        if (data.session) setSession(data.session)
         // TODO: Show toast for successful sign in
         if (error) console.error(error)
       } catch (err) {
@@ -58,8 +47,8 @@ function SignIn() {
     },
   });
   return (
-    <CenterLayout>
-      <LoginCard>
+    <div style={{display: 'grid', gridTemplateColumns: "1fr", placeItems: "center", height: "100vh", width: "100%"}}>
+      <Card style={{width: "20rem", margin: "2rem"}}>
         <Input id="email" name="email" placeholder="" label="Email" width="100%" onChange={formik.handleChange} value={formik.values.email}/>
         <Spacer h={2}/>
         <Input.Password id="password" name="password" placeholder="" label="Password" width="100%" onChange={formik.handleChange} value={formik.values.password}/>
@@ -74,8 +63,8 @@ function SignIn() {
           <Button style={{ width: "100%",display: "grid", alignItems: "center"}} type="secondary" ghost disabled><Youtube /></Button>
           <Button style={{ width: "100%",display: "grid", alignItems: "center"}} type="secondary" ghost disabled><Twitter /></Button>
         </ButtonGroup>
-      </LoginCard>
-    </CenterLayout>
+      </Card>
+    </div>
   )
 }
 

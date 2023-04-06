@@ -1,54 +1,33 @@
-import React, { useEffect } from "react";
-import useSWR from 'swr'
-import { Auth } from '@supabase/ui'
-import {supabase} from "@/lib/supabaseClient";
-import {useRouter} from "next/router";
-
-// pages
+import React, {useEffect, useState} from "react";
+import {Session, useSupabaseClient} from '@supabase/auth-helpers-react'
 import SignIn from "@/pages/sign-in";
-
-// @ts-ignore
-const fetcher = ([url, token]) =>
-  fetch(url, {
-    method: 'GET',
-    headers: new Headers({ 'Content-Type': 'application/json', token }),
-    credentials: 'same-origin',
-  }).then((res) => res.json())
-
-const Index = () => {
-  const router = useRouter()
-  const { user, session } = Auth.useUser()
-  const { data, error } = useSWR(
-    session ? ['/api/getUser', session.access_token] : null,
-    fetcher
-  )
-
+import {AuthChangeEvent} from "@supabase/gotrue-js";
+const Index = ({children}: any) => {
+  const [session, setSession] = useState<Session | null>(null)
+  const supabase = useSupabaseClient()
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        // Send session to /api/auth route to set the auth cookie.
-        // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
-        fetch('/api/auth', {
-          method: 'POST',
-          headers: new Headers({ 'Content-Type': 'application/json' }),
-          credentials: 'same-origin',
-          body: JSON.stringify({ event, session }),
-        }).then((res) => res.json())
-      }
-    )
+    supabase?.auth?.getSession().then(({ data: { session} }: any ) => {
+      setSession(session)
+    })
 
-    return () => {
-      authListener?.unsubscribe()
-    }
+    const {
+      data: { subscription },
+    } = supabase?.auth?.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
-  useEffect(() => {
-    if (!user) {
-      router.push('/sign-in')
-    } else {
-      router.push('/ticket-manager')
-    }
-  }, [user])
 
+  return (
+    <div>
+      {!session ? (
+        <SignIn setSession={setSession} />
+      ) : (
+        <>Welcome to your account.</>
+      )}
+    </div>
+  )
 }
 
 export default Index

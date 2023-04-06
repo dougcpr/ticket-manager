@@ -1,10 +1,12 @@
-import {FC} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import styled from 'styled-components';
 import LogOut from "@geist-ui/icons/logOut";
-import {Button, Spacer} from "@geist-ui/core";
-import {supabase} from "@/lib/supabaseClient";
+import {Button} from "@geist-ui/core";
 import {Inbox, Settings} from "@geist-ui/icons";
+import {Session, useSupabaseClient} from "@supabase/auth-helpers-react";
+import {AuthChangeEvent} from "@supabase/gotrue-js";
+import Home from "@geist-ui/icons/home";
 
 const NavBarContainer = styled.div`
   display: grid;
@@ -38,8 +40,22 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({children}) => {
+  const supabase = useSupabaseClient()
   const router = useRouter()
+  const [session, setSession] = useState<Session | null>(null)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      setSession(session)
+    })
 
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
   function determineButtonBackgroundColor(path: string) {
     if (router.pathname === path) {
       return "#272832"
@@ -48,15 +64,21 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
     }
   }
   async function signOut() {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
     await router.push('/')
   }
+  if (session) {
     return (
       <NavBarContainer>
         <SideNavBar>
           <SideNavBarButtonContainer>
             <SideNavBarNavigationButtons>
               {/*TODO: MAKE LOOPED TEMPLATE OBJECT */}
+              <Button
+                onClick={() => router.push('/')} style={{backgroundColor: determineButtonBackgroundColor('/'), border: 0}}
+                iconRight={<Home color="#858699"/>}
+                auto
+                scale={1} />
               <Button
                 onClick={() => router.push('/ticket-manager')} style={{backgroundColor: determineButtonBackgroundColor('/ticket-manager'), border: 0}}
                 iconRight={<Inbox color="#858699" />}
@@ -76,6 +98,9 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
         {children}
       </NavBarContainer>
     )
+  } else {
+    return <>{children}</>
+  }
 
 };
 

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {supabase} from "@/lib/supabaseClient";
+// import {supabase} from "@/lib/supabaseClient";
 import {Button, Modal, Text, Input, Spacer} from "@geist-ui/core";
 import styled from "styled-components";
 import { useFormik } from 'formik';
@@ -8,6 +8,9 @@ import {Ticket, TicketActivity, TicketPriorities} from "@/features/ticket/models
 import {Auth} from "@supabase/ui";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsOverview from "@/components/ticket-manager/TicketOverview";
+import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs";
+import {GetServerSidePropsContext} from "next";
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 
 const TicketManagerContainer = styled.div`
   background-color: ${({theme}) => theme.secondaryBackgroundColor};
@@ -21,20 +24,21 @@ const TicketManagerHeader = styled.div`
 
 // @ts-ignore
 function TicketManager() {
-  const { user } = Auth.useUser()
   const [tickets, setTickets] = useState<Ticket[]>()
   const router = useRouter()
   const [state, setState] = useState(false)
-  useEffect(() => {
-    fetchTickets()
-      .then((res) => {})
-  }, [])
-  async function fetchTickets() {
-    let { data } = await supabase
-      .from('Tickets')
-      .select('*')
-    if (data) setTickets(data)
-  }
+  const supabase = useSupabaseClient()
+  const user = useUser()
+  // useEffect(() => {
+  //   fetchTickets()
+  //     .then((res) => {})
+  // }, [])
+  // async function fetchTickets() {
+  //   let { data } = await supabase
+  //     .from('Tickets')
+  //     .select('*')
+  //   if (data) setTickets(data)
+  // }
 
   const handler = () => setState(true)
   const closeHandler = () => {
@@ -144,19 +148,6 @@ function TicketManager() {
         </div>
       </TicketManagerContainer>
     )
-}
-
-export async function getServerSideProps({ req } : any) {
-  const { user } = await supabase.auth.api.getUserByCookie(req)
-  if (!user) {
-    // If no user, redirect to index.
-    return { props: {}, redirect: { destination: '/', permanent: false } }
-  }
-
-  // If there is a user, return it.
-  // TODO: Fix. Feels Bad
-  return { props: { user } }
-
 }
 
 export default TicketManager

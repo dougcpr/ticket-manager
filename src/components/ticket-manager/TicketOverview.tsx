@@ -73,7 +73,6 @@ function returnTicketIcon(status: string) {
 function TicketsOverview() {
   const [tickets, setTickets] = useState<Ticket[]>()
   const [selectedTicket, setSelectedTicket] = useState<Ticket>()
-  const [sideDrawerState, setSideDrawer] = React.useState(false)
   useEffect(() => {
     fetchTicketList()
       .then((res) => {})
