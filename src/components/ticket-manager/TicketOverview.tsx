@@ -5,8 +5,7 @@ import {Ticket} from "@/features/ticket/models";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsDetails from "@/components/ticket-manager/components/TicketDetails";
 import TicketStatus from "@/components/ticket-manager/components/TicketStatus";
-import {Circle, CheckInCircle, Sidebar} from '@geist-ui/icons'
-import {Button, Drawer} from "@geist-ui/core";
+import {Circle, CheckInCircle} from '@geist-ui/icons'
 
 const DashCircle = styled.div`
   height: 1rem;
@@ -55,10 +54,6 @@ const TicketListSecondRow = styled.div`
   grid-template-columns: 1fr 3fr;
 `
 
-const RightSidebar = styled(Sidebar)`
-  transform: rotate(180deg);
-`
-
 function returnTicketIcon(status: string) {
   switch(status) {
     case 'Todo':
@@ -78,10 +73,11 @@ function TicketsOverview() {
       .then((res) => {})
   }, [])
   async function fetchTicketList() {
-    let { data } = await supabase
+    let { data }: any  = await supabase
       .from('Tickets')
       .select(`*`)
       .order('created_at')
+    console.log(data)
     if (data) setTickets(data)
   }
 
@@ -94,7 +90,7 @@ function TicketsOverview() {
   }
 
   async function gatherTicketDetails(id: number) {
-    let { data } = await supabase
+    let { data }: any  = await supabase
       .from('Tickets')
       .select(`
          *,
