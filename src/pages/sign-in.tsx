@@ -38,7 +38,7 @@ const SignIn: FC<AppLayoutProps> = ({setSession}) => {
       try {
         const { data, error } = await supabase.auth.signInWithPassword(values);
         if (data.session) setSession(data.session)
-        // TODO: Show toast for successful sign in
+        // TODO: Show toast for successful
         if (error) console.error(error)
       } catch (err) {
         console.error(err)
