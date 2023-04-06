@@ -10,6 +10,7 @@ import Home from "@geist-ui/icons/home";
 import Plus from "@geist-ui/icons/plus";
 import {useFormik} from "formik";
 import {Ticket, TicketPriorities} from "@/features/ticket/models";
+import {supabase} from "@/lib/supabaseClient";
 
 const NavBarContainer = styled.div`
   display: grid;
@@ -81,32 +82,30 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
     initialValues: {
       title: '',
       description: '',
-      status: 'Todo',
-      TicketMetaData: {
-        laptopType: '',
-        reportedBy: user?.email,
-        ticket_id: 0,
-        assignedTo: '',
-        ticketType: '',
-        priority: TicketPriorities.Low
-      },
+      status: 'Todo'
     },
     onSubmit: async (values: Partial<Ticket>) => {
       setState(false)
-
       try {
-        const {data} = await supabase
+        const {data} : any = await supabase
           .from('Tickets')
           .insert([
             values,
           ])
         // TODO: Fix as next action item
         // if (data?.id) {
-        //   values.TicketMetaData.ticket_id = data.id;
         //   await supabase
         //     .from('TicketMetaData')
-        //     .insert([values.TicketMetaData])
-        //   await fetchTickets()
+        //     .insert([{
+        //       TicketMetaData: {
+        //         laptopType: '',
+        //         reportedBy: user?.email,
+        //         ticket_id: data.id,
+        //         assignedTo: '',
+        //         ticketType: '',
+        //         priority: TicketPriorities.Low
+        //       },
+        //     }])
         // }
       } catch (err) {
         console.error(err)

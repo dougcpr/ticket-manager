@@ -83,7 +83,7 @@ function TicketActivities({selectedTicket}: any) {
       .from('Employees')
       .select(`*`)
       .eq('email', user?.email)
-      .then(({data}: PostgrestResponse<Employee>) => {
+      .then(({data}: PostgrestResponse<any>) => {
         if (data) {
           setUserData(data[0])
         }
@@ -97,7 +97,7 @@ function TicketActivities({selectedTicket}: any) {
          TicketActivity (*)`)
       .eq('id', ticket.id)
       .order('created_at', { ascending: true, nullsFirst: false, foreignTable: 'TicketActivity' })
-      .then(({data}: PostgrestResponse<Ticket>) => {
+      .then(({data}: PostgrestResponse<any>) => {
         if (data) {
           setTicketData(data[0])
         }

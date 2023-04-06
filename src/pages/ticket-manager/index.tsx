@@ -1,16 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
-// import {supabase} from "@/lib/supabaseClient";
-import {Button, Modal, Text, Input, Spacer} from "@geist-ui/core";
+import {Button, Spacer} from "@geist-ui/core";
 import styled from "styled-components";
-import { useFormik } from 'formik';
-import {Ticket, TicketActivity, TicketPriorities} from "@/features/ticket/models";
-import {Auth} from "@supabase/ui";
-import {renderDate} from "@/lib/helpers/sharedFunctions";
+import {Ticket, TicketActivity} from "@/features/ticket/models";
 import TicketsOverview from "@/components/ticket-manager/TicketOverview";
-import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs";
-import {GetServerSidePropsContext} from "next";
-import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 const TicketManagerContainer = styled.div`
   background-color: ${({theme}) => theme.secondaryBackgroundColor};
