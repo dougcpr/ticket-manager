@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import LogOut from "@geist-ui/icons/logOut";
 import {Button, Spacer} from "@geist-ui/core";
 import {supabase} from "@/lib/supabaseClient";
-import {Auth} from "@supabase/ui";
 import {Inbox, Settings} from "@geist-ui/icons";
 
 const NavBarContainer = styled.div`
@@ -39,7 +38,6 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({children}) => {
-  const { user } = Auth.useUser()
   const router = useRouter()
 
   function determineButtonBackgroundColor(path: string) {
@@ -49,48 +47,35 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
       return "transparent"
     }
   }
-
   async function signOut() {
     await supabase.auth.signOut()
     await router.push('/')
   }
-  if (user) {
     return (
-      <div>
-        <NavBarContainer>
-          <SideNavBar>
-            <Spacer h={1}/>
-            <SideNavBarButtonContainer>
-              <SideNavBarNavigationButtons>
-                {/*TODO: MAKE LOOPED TEMPLATE OBJECT */}
-                <Button
-                  onClick={() => router.push('/ticket-manager')} style={{backgroundColor: determineButtonBackgroundColor('/ticket-manager'), border: 0}}
-                  iconRight={<Inbox color="#858699" />}
-                  auto
-                  scale={1} />
-                <Button
-                  onClick={() => router.push('/settings')} style={{backgroundColor: determineButtonBackgroundColor('/settings'), border: 0}}
-                  iconRight={<Settings color="#858699"/>}
-                  auto
-                  scale={1} />
-              </SideNavBarNavigationButtons>
-              <SideNavBarOperationalButtons>
-                <Button onClick={signOut} style={{backgroundColor: "transparent", border: 0}} iconRight={<LogOut />} auto scale={1} />
-              </SideNavBarOperationalButtons>
-            </SideNavBarButtonContainer>
-            <Spacer h={3}/>
-          </SideNavBar>
-          {children}
-        </NavBarContainer>
-      </div>
-    );
-  } else {
-    return (
-      <div>
+      <NavBarContainer>
+        <SideNavBar>
+          <SideNavBarButtonContainer>
+            <SideNavBarNavigationButtons>
+              {/*TODO: MAKE LOOPED TEMPLATE OBJECT */}
+              <Button
+                onClick={() => router.push('/ticket-manager')} style={{backgroundColor: determineButtonBackgroundColor('/ticket-manager'), border: 0}}
+                iconRight={<Inbox color="#858699" />}
+                auto
+                scale={1} />
+              <Button
+                onClick={() => router.push('/settings')} style={{backgroundColor: determineButtonBackgroundColor('/settings'), border: 0}}
+                iconRight={<Settings color="#858699"/>}
+                auto
+                scale={1} />
+            </SideNavBarNavigationButtons>
+            <SideNavBarOperationalButtons>
+              <Button onClick={signOut} style={{backgroundColor: "transparent", border: 0}} iconRight={<LogOut />} auto scale={1} />
+            </SideNavBarOperationalButtons>
+          </SideNavBarButtonContainer>
+        </SideNavBar>
         {children}
-      </div>
+      </NavBarContainer>
     )
-  }
 
 };
 

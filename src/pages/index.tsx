@@ -41,27 +41,14 @@ const Index = () => {
       authListener?.unsubscribe()
     }
   }, [])
-
   useEffect(() => {
-    if (user) {
+    if (!user) {
+      router.push('/sign-in')
+    } else {
       router.push('/ticket-manager')
     }
   }, [user])
 
-  const View = () => {
-    if (!user) {
-      return (
-        <SignIn />
-      )
-    } else {
-      return (
-        <></>
-      )
-    }
-  }
-  return (
-    <View />
-  )
 }
 
 export default Index

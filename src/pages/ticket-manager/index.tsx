@@ -104,7 +104,6 @@ function TicketManager() {
     )
   }
   // TODO: Awful practice
-  if (user) {
     return (
       // <TicketManagerContainer>
       //   <TicketManagerHeader>
@@ -145,8 +144,6 @@ function TicketManager() {
         </div>
       </TicketManagerContainer>
     )
-  }
-
 }
 
 export async function getServerSideProps({ req } : any) {

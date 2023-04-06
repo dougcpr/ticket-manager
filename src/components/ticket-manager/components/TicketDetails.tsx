@@ -30,7 +30,7 @@ function TicketsDetails({selectedTicket}: any) {
   const [description, setDescription] = useState<string>()
   // TODO: this feels bad
   useEffect(() => {
-    setDescription(selectedTicket.description)
+    setDescription(selectedTicket?.description)
   }, [selectedTicket])
   async function submitTicket() {
     await supabase
