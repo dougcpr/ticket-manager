@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import {Button, Textarea} from "@geist-ui/core";
+import {Button, Textarea, User} from "@geist-ui/core";
 import {useFormik} from "formik";
 import {supabase} from "@/lib/supabaseClient";
 import {Employee, TicketActivity} from "@/features/ticket/models";
@@ -34,6 +34,13 @@ const TicketComment = styled.div`
   display: grid;
   grid-row-gap: 0.5rem;
 `
+
+const TicketCommentAuthorRow = styled.div`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 6rem 1fr;
+`
+
 function TicketActivities({selectedTicket}: any) {
   const [ticket, setTicketData] = useState(selectedTicket)
   const [userData, setUserData] = useState<Employee>()
@@ -94,7 +101,13 @@ function TicketActivities({selectedTicket}: any) {
       .from('Tickets')
       .select(`
          *,
-         TicketActivity (*)`)
+         TicketActivity(
+           id, 
+           created_at,
+           message,
+           author,
+           userData:Employees!TicketActivity_userData_fkey(id, name, email, avatarUrl)
+         )`)
       .eq('id', ticket.id)
       .order('created_at', { ascending: true, nullsFirst: false, foreignTable: 'TicketActivity' })
       .then(({data}: PostgrestResponse<any>) => {
@@ -112,9 +125,10 @@ function TicketActivities({selectedTicket}: any) {
         await supabase.from('TicketActivity')
           .insert([
             {
-              ticket_id: ticket.id,
+              ticketId: ticket.id,
               author: userData?.name,
-              message: values.message
+              message: values.message,
+              userData: userData?.id
             }
           ])
         fetchTickets()
@@ -132,7 +146,7 @@ function TicketActivities({selectedTicket}: any) {
           {ticket?.TicketActivity.length ? ticket?.TicketActivity?.map((comment: TicketActivity) => {
             return (
               <TicketComment key={comment.id}>
-                <div>{comment.author} <span style={{color: '#818295', fontSize: "0.85rem"}}>{calculateTimeSinceNow(comment.created_at)}</span></div>
+                <TicketCommentAuthorRow><User src={userData?.avatarUrl} name={userData?.name} /> <span style={{color: '#818295', fontSize: "0.85rem"}}>{calculateTimeSinceNow(comment.created_at)}</span></TicketCommentAuthorRow>
                 <div>{comment.message}</div>
               </TicketComment>
             )

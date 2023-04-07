@@ -17,7 +17,8 @@ export type TicketActivity = {
   author: string,
   created_at?: string,
   message: string,
-  ticket_id: number
+  ticketId: number,
+  userData: number
 }
 
 export enum TicketPriorities {
@@ -30,5 +31,6 @@ export enum TicketPriorities {
 export type Employee = {
   id?: number,
   name: string,
-  email: string
+  email: string,
+  avatarUrl: string
 }

@@ -54,7 +54,7 @@ const TicketListSecondRow = styled.div`
   grid-template-columns: 1fr 3fr;
 `
 
-function returnTicketIcon(status: string) {
+function returnTicketIcon(status: string | string[]) {
   switch(status) {
     case 'Todo':
       return <DashCircle />
@@ -85,7 +85,6 @@ function TicketsOverview() {
     )
     .subscribe()
   async function fetchTicketList() {
-    // TODO
     let { data }: any  = await supabase
       .from('Tickets')
       .select(`id, title, description, status, created_at`)
@@ -114,7 +113,13 @@ function TicketsOverview() {
          ticketType,
          priority,
          assignedTo:Employees!Tickets_assignedTo_fkey(id, name),
-         TicketActivity(*)`)
+         TicketActivity(
+           id, 
+           created_at,
+           message,
+           author,
+           userData:Employees!TicketActivity_userData_fkey(id, name, email, avatarUrl)
+         )`)
       .eq('id', id)
       .order('created_at', { ascending: true, nullsFirst: false, foreignTable: 'TicketActivity' })
       .single()
