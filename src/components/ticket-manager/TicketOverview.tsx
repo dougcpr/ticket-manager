@@ -72,6 +72,18 @@ function TicketsOverview() {
     fetchTicketList()
       .then((res) => {})
   }, [])
+
+  supabase.channel('custom-insert-channel')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'Tickets' },
+      async (payload: any) => {
+        if (payload.new.id) {
+          await fetchTicketList()
+        }
+      }
+    )
+    .subscribe()
   async function fetchTicketList() {
     // TODO
     let { data }: any  = await supabase

@@ -2,15 +2,14 @@ import React, {FC, useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import styled from 'styled-components';
 import LogOut from "@geist-ui/icons/logOut";
-import {Button, Input, Modal, Select, Spacer, Textarea} from "@geist-ui/core";
-import {BarChart, Inbox, Settings} from "@geist-ui/icons";
-import {Session, useSupabaseClient, useUser} from "@supabase/auth-helpers-react";
+import {Button, Modal, Select} from "@geist-ui/core";
+import {Inbox, Settings} from "@geist-ui/icons";
+import {Session, useSupabaseClient} from "@supabase/auth-helpers-react";
 import {AuthChangeEvent} from "@supabase/gotrue-js";
 import Home from "@geist-ui/icons/home";
 import Plus from "@geist-ui/icons/plus";
 import {useFormik} from "formik";
 import {Employee, Ticket, TicketPriorities} from "@/features/ticket/models";
-import {supabase} from "@/lib/supabaseClient";
 import {PostgrestResponse} from "@supabase/supabase-js";
 
 const NavBarContainer = styled.div`
@@ -97,6 +96,7 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
       title: '',
       description: '',
       status: 'Todo',
+      linkedTickets: [],
       priority: TicketPriorities.Low,
       assignedTo: 3,
       ticketType: 'task'
