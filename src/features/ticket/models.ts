@@ -2,12 +2,12 @@ export type Ticket = {
   id: number,
   created_at: string,
   description: string,
-  status: string,
+  status: string | string[],
   title: string,
   assignedTo: number,
   priority: TicketPriorities,
   linkedTickets?: number[],
-  ticketType: string
+  ticketType: string | string[]
   TicketActivity: TicketActivity[]
 
 }

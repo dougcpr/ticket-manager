@@ -47,6 +47,13 @@ const CreateTicketSelect = styled(Select)`
   color: #908fab;
 `
 
+const CreateTicketTextArea = styled.textarea`
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+`
+
 type AppLayoutProps = {
   children: any;
 };
@@ -102,7 +109,6 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
       ticketType: 'task'
     },
     onSubmit: async (values: Partial<Ticket>) => {
-      setState(false)
       try {
         const {data} = await supabase
           .from('Tickets')
@@ -112,6 +118,7 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
       } catch (err) {
         console.error(err)
       } finally {}
+      setState(false)
       formik.handleReset({})
     },
   });
@@ -155,28 +162,28 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
           <Modal.Title>Create Ticket</Modal.Title>
           <Modal.Content>
             <form style={{display: "grid", gridTemplateRows: "1fr 1fr 1fr", gridRowGap: "1rem"}}>
-              <textarea style={{border: "none", outline: 'none', width: "100%", background: "transparent" }}  id="title" name="title" placeholder="Ticket title" onChange={formik.handleChange} value={formik.values.title}/>
-              <textarea style={{border: "none", outline: 'none', width: "100%", background: "transparent" }}  id="description" name="description" placeholder="Add description..." onChange={formik.handleChange} value={formik.values.description}/>
+              <CreateTicketTextArea id="title" name="title" placeholder="Ticket title" onChange={formik.handleChange} value={formik.values.title}/>
+              <CreateTicketTextArea id="description" name="description" placeholder="Add description..." onChange={formik.handleChange} value={formik.values.description}/>
               <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gridColumnGap: "0.5rem"}}>
-                <CreateTicketSelect pure={true} value={formik.values.status} onChange={formik.handleChange}>
+                <CreateTicketSelect pure={true} value={formik.values.status} onChange={(v: string | string[]) => formik.values.status = v}>
                   <Select.Option value="Todo">Todo</Select.Option>
                   <Select.Option value="In Progress">In Progress</Select.Option>
                   <Select.Option value="Waiting on Engineering">Waiting on Engineering</Select.Option>
                   <Select.Option value="Waiting on Customer">Waiting on Customer</Select.Option>
                   <Select.Option value="Closed">Closed</Select.Option>
                 </CreateTicketSelect>
-                <CreateTicketSelect pure={true} placeholder="Priority" onChange={formik.handleChange} value={formik.values.priority}>
+                <CreateTicketSelect pure={true} placeholder="Priority" onChange={(v: any) => formik.values.priority = v} value={formik.values.priority}>
                   <Select.Option value={TicketPriorities.Low}>{TicketPriorities.Low}</Select.Option>
                   <Select.Option value={TicketPriorities.Medium}>{TicketPriorities.Medium}</Select.Option>
                   <Select.Option value={TicketPriorities.High}>{TicketPriorities.High}</Select.Option>
                   <Select.Option value={TicketPriorities.Critical}>{TicketPriorities.Critical}</Select.Option>
                 </CreateTicketSelect>
-                <CreateTicketSelect pure={true} placeholder="Type" onChange={formik.handleChange} value={formik.values.ticketType}>
+                <CreateTicketSelect pure={true} placeholder="Type" onChange={(v: string | string[]) => formik.values.ticketType = v} value={formik.values.ticketType}>
                   <Select.Option value="task">Task</Select.Option>
                   <Select.Option value="bug">Bug</Select.Option>
                   <Select.Option value="improvement">Improvement</Select.Option>
                 </CreateTicketSelect>
-                <CreateTicketSelect pure={true} placeholder="Assignee" onChange={formik.handleChange} value={formik.values.assignedTo?.toString()}>
+                <CreateTicketSelect pure={true} placeholder="Assignee" onChange={(v: any) => formik.values.assignedTo = v} value={formik.values.assignedTo?.toString()}>
                   {users && users.map((user: Employee) => {
                     return (
                       <Select.Option key={user.id} value={user.id?.toString()}>{user.name}</Select.Option>
