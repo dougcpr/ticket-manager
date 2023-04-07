@@ -2,15 +2,16 @@ import React, {FC, useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import styled from 'styled-components';
 import LogOut from "@geist-ui/icons/logOut";
-import {Button, Input, Modal, Spacer} from "@geist-ui/core";
-import {Inbox, Settings} from "@geist-ui/icons";
+import {Button, Input, Modal, Select, Spacer, Textarea} from "@geist-ui/core";
+import {BarChart, Inbox, Settings} from "@geist-ui/icons";
 import {Session, useSupabaseClient, useUser} from "@supabase/auth-helpers-react";
 import {AuthChangeEvent} from "@supabase/gotrue-js";
 import Home from "@geist-ui/icons/home";
 import Plus from "@geist-ui/icons/plus";
 import {useFormik} from "formik";
-import {Ticket, TicketPriorities} from "@/features/ticket/models";
+import {Employee, Ticket, TicketPriorities} from "@/features/ticket/models";
 import {supabase} from "@/lib/supabaseClient";
+import {PostgrestResponse} from "@supabase/supabase-js";
 
 const NavBarContainer = styled.div`
   display: grid;
@@ -42,6 +43,11 @@ const SideNavBarOperationalButtons = styled.div`
   padding-bottom: 3rem;
 `
 
+const CreateTicketSelect = styled(Select)`
+  background-color: #323343;
+  color: #908fab;
+`
+
 type AppLayoutProps = {
   children: any;
 };
@@ -51,12 +57,20 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
   const router = useRouter()
   const [session, setSession] = useState<Session | null>(null)
   const [state, setState] = useState(false)
-  const user = useUser()
+  const [users, setUsers] = useState<any>()
 
   const handler = () => setState(true)
   const closeHandler = () => {
     setState(false)
   }
+  useEffect(() => {
+    supabase
+      .from("Employees")
+      .select("*")
+      .then(({data}: PostgrestResponse<any>) => {
+        setUsers(data)
+      })
+  }, [])
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: any) => {
       setSession(session)
@@ -83,10 +97,9 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
       title: '',
       description: '',
       status: 'Todo',
-      reportedBy: '',
-      linkedTickets: [],
-      assignedTo: '',
-      ticketType: ''
+      priority: TicketPriorities.Low,
+      assignedTo: 3,
+      ticketType: 'task'
     },
     onSubmit: async (values: Partial<Ticket>) => {
       setState(false)
@@ -96,21 +109,6 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
           .insert([
             values,
           ])
-        // TODO: Fix as next action item
-        // if (data?.id) {
-        //   await supabase
-        //     .from('TicketMetaData')
-        //     .insert([{
-        //       TicketMetaData: {
-        //         laptopType: '',
-        //         reportedBy: user?.email,
-        //         ticket_id: data.id,
-        //         assignedTo: '',
-        //         ticketType: '',
-        //         priority: TicketPriorities.Low
-        //       },
-        //     }])
-        // }
       } catch (err) {
         console.error(err)
       } finally {}
@@ -153,13 +151,39 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
           </SideNavBar>
           {children}
         </NavBarContainer>
-        <Modal visible={state} onClose={closeHandler}>
+        <Modal width={2} visible={state} onClose={() => {closeHandler(); formik.resetForm();}}>
           <Modal.Title>Create Ticket</Modal.Title>
           <Modal.Content>
-            <form>
-              <Input id="title" name="title" label="Name" placeholder="" onChange={formik.handleChange} value={formik.values.title}/>
-              <Spacer h={2}/>
-              <Input id="description" name="description" label="Description" placeholder="" onChange={formik.handleChange} value={formik.values.description}/>
+            <form style={{display: "grid", gridTemplateRows: "1fr 1fr 1fr", gridRowGap: "1rem"}}>
+              <textarea style={{border: "none", outline: 'none', width: "100%", background: "transparent" }}  id="title" name="title" placeholder="Ticket title" onChange={formik.handleChange} value={formik.values.title}/>
+              <textarea style={{border: "none", outline: 'none', width: "100%", background: "transparent" }}  id="description" name="description" placeholder="Add description..." onChange={formik.handleChange} value={formik.values.description}/>
+              <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gridColumnGap: "0.5rem"}}>
+                <CreateTicketSelect pure={true} value={formik.values.status} onChange={formik.handleChange}>
+                  <Select.Option value="Todo">Todo</Select.Option>
+                  <Select.Option value="In Progress">In Progress</Select.Option>
+                  <Select.Option value="Waiting on Engineering">Waiting on Engineering</Select.Option>
+                  <Select.Option value="Waiting on Customer">Waiting on Customer</Select.Option>
+                  <Select.Option value="Closed">Closed</Select.Option>
+                </CreateTicketSelect>
+                <CreateTicketSelect pure={true} placeholder="Priority" onChange={formik.handleChange} value={formik.values.priority}>
+                  <Select.Option value={TicketPriorities.Low}>{TicketPriorities.Low}</Select.Option>
+                  <Select.Option value={TicketPriorities.Medium}>{TicketPriorities.Medium}</Select.Option>
+                  <Select.Option value={TicketPriorities.High}>{TicketPriorities.High}</Select.Option>
+                  <Select.Option value={TicketPriorities.Critical}>{TicketPriorities.Critical}</Select.Option>
+                </CreateTicketSelect>
+                <CreateTicketSelect pure={true} placeholder="Type" onChange={formik.handleChange} value={formik.values.ticketType}>
+                  <Select.Option value="task">Task</Select.Option>
+                  <Select.Option value="bug">Bug</Select.Option>
+                  <Select.Option value="improvement">Improvement</Select.Option>
+                </CreateTicketSelect>
+                <CreateTicketSelect pure={true} placeholder="Assignee" onChange={formik.handleChange} value={formik.values.assignedTo?.toString()}>
+                  {users && users.map((user: Employee) => {
+                    return (
+                      <Select.Option key={user.id} value={user.id?.toString()}>{user.name}</Select.Option>
+                    )
+                  })}
+                </CreateTicketSelect>
+              </div>
             </form>
           </Modal.Content>
           <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>

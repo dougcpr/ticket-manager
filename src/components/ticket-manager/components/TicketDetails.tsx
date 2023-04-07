@@ -47,13 +47,10 @@ function TicketsDetails({selectedTicket}: any) {
   if (selectedTicket?.id) {
     return (
       <TicketDetailsContainer>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <TicketDetailsHeader>
-            <File />
-            <p>HD-{selectedTicket?.id}</p>
-          </TicketDetailsHeader>
-          <div>Reported By: {selectedTicket.reportedBy.name}</div>
-        </div>
+        <TicketDetailsHeader>
+          <File />
+          <p>HD-{selectedTicket?.id}</p>
+        </TicketDetailsHeader>
         <TicketDetailsTitle>
           <h3>{selectedTicket.title}</h3>
           <hr/>

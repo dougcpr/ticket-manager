@@ -4,8 +4,7 @@ export type Ticket = {
   description: string,
   status: string,
   title: string,
-  reportedBy: string | undefined,
-  assignedTo: string,
+  assignedTo: number,
   priority: TicketPriorities,
   linkedTickets?: number[],
   ticketType: string

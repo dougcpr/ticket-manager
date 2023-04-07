@@ -98,7 +98,6 @@ function TicketsOverview() {
          description,
          title,
          status,
-         reportedBy:Employees!Tickets_reportedBy_fkey(id, name),
          linkedTickets,
          ticketType,
          priority,

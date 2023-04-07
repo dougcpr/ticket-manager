@@ -25,7 +25,6 @@ const TicketActivityCard = styled.div``
 const TicketActivityContainer = styled.div`
   display: grid;
   grid-gap: 1rem;
-  max-width: 80rem;
 `
 
 const TicketComment = styled.div`
