@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import styled from "styled-components";
-import {Button, Spacer, Textarea} from "@geist-ui/core";
+import {Button, Textarea} from "@geist-ui/core";
 import {useFormik} from "formik";
 import {supabase} from "@/lib/supabaseClient";
-import {Employee, Ticket, TicketActivity} from "@/features/ticket/models";
-import {Auth} from "@supabase/ui";
+import {Employee, TicketActivity} from "@/features/ticket/models";
 import {PostgrestResponse} from "@supabase/supabase-js";
 import moment from "moment";
+import {useUser} from "@supabase/auth-helpers-react";
 
 const TicketNewCommentSection = styled.div`
   display: grid;
@@ -35,9 +35,9 @@ const TicketComment = styled.div`
   grid-row-gap: 0.5rem;
 `
 function TicketActivities({selectedTicket}: any) {
-  const { user } = Auth.useUser()
   const [ticket, setTicketData] = useState(selectedTicket)
   const [userData, setUserData] = useState<Employee>()
+  const user = useUser()
 
   useEffect(() => {
     setTicketData(selectedTicket)
