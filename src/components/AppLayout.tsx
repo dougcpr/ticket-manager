@@ -11,6 +11,7 @@ import Plus from "@geist-ui/icons/plus";
 import {useFormik} from "formik";
 import {Employee, Ticket, TicketPriorities} from "@/features/ticket/models";
 import {PostgrestResponse} from "@supabase/supabase-js";
+import {TextArea} from "@/components/core/TextArea";
 
 const NavBarContainer = styled.div`
   display: grid;
@@ -45,13 +46,6 @@ const SideNavBarOperationalButtons = styled.div`
 const CreateTicketSelect = styled(Select)`
   background-color: #323343;
   color: #908fab;
-`
-
-const CreateTicketTextArea = styled.textarea`
-  border: none;
-  outline: none;
-  width: 100%;
-  background: transparent;
 `
 
 type AppLayoutProps = {
@@ -162,8 +156,8 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
           <Modal.Title>Create Ticket</Modal.Title>
           <Modal.Content>
             <form style={{display: "grid", gridTemplateRows: "1fr 1fr 1fr", gridRowGap: "1rem"}}>
-              <CreateTicketTextArea id="title" name="title" placeholder="Ticket title" onChange={formik.handleChange} value={formik.values.title}/>
-              <CreateTicketTextArea id="description" name="description" placeholder="Add description..." onChange={formik.handleChange} value={formik.values.description}/>
+              <TextArea id="title" name="title" placeholder="Ticket title" onChange={formik.handleChange} value={formik.values.title}/>
+              <TextArea id="description" name="description" placeholder="Add description..." onChange={formik.handleChange} value={formik.values.description}/>
               <div style={{display: 'grid', gridTemplateColumns: "repeat(4, 1fr)", gridColumnGap: "0.5rem"}}>
                 <CreateTicketSelect pure={true} value={formik.values.status} onChange={(v: string | string[]) => formik.values.status = v}>
                   <Select.Option value="Todo">Todo</Select.Option>

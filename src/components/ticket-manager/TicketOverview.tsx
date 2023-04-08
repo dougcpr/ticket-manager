@@ -5,6 +5,8 @@ import {Ticket} from "@/features/ticket/models";
 import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsDetails from "@/components/ticket-manager/components/TicketDetails";
 import {Circle, CheckInCircle} from '@geist-ui/icons'
+import Filter from "@geist-ui/icons/filter";
+import {Button} from "@geist-ui/core";
 
 const DashCircle = styled.div`
   height: 1rem;
@@ -21,6 +23,8 @@ const TicketSection = styled.div`
 `
 
 const TicketListContainer = styled.div`
+  display: grid;
+  grid-template-rows: 3rem 1fr;
   border-right: 1px solid #2a2b39;
   max-width: 25rem;
 `
@@ -84,6 +88,17 @@ function TicketsOverview() {
       }
     )
     .subscribe()
+  supabase.channel('custom-update-channel')
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'Tickets' },
+      async (payload: any) => {
+        if (payload.new.id) {
+          await fetchTicketList()
+        }
+      }
+    )
+    .subscribe()
   async function fetchTicketList() {
     let { data }: any  = await supabase
       .from('Tickets')
@@ -129,20 +144,25 @@ function TicketsOverview() {
   return (
     <TicketSection>
       <TicketListContainer>
-        {tickets && tickets.map((ticket: Ticket) => {
-          return (
-            <TicketListRow style={changeTicketBackground(ticket.id)} onClick={() => gatherTicketDetails(ticket.id)} key={ticket.id}>
-              <TicketListFirstRow>
-                <TicketListText>{ticket.title}</TicketListText>
-                <div style={{textAlign: "end"}}>{returnTicketIcon(ticket.status)}</div>
-              </TicketListFirstRow>
-              <TicketListSecondRow>
-                <div/>
-                <div style={{textAlign: "end"}}>{renderDate(ticket.created_at)}</div>
-              </TicketListSecondRow>
-            </TicketListRow>
-          )
-        })}
+        <div style={{padding: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          Inbox <Button style={{border: "none"}} auto iconRight={<Filter/>} />
+        </div>
+        <div>
+          {tickets && tickets.map((ticket: Ticket) => {
+            return (
+              <TicketListRow style={changeTicketBackground(ticket.id)} onClick={() => gatherTicketDetails(ticket.id)} key={ticket.id}>
+                <TicketListFirstRow>
+                  <TicketListText>{ticket.title}</TicketListText>
+                  <div style={{textAlign: "end"}}>{returnTicketIcon(ticket.status)}</div>
+                </TicketListFirstRow>
+                <TicketListSecondRow>
+                  <div/>
+                  <div style={{textAlign: "end"}}>{renderDate(ticket.created_at)}</div>
+                </TicketListSecondRow>
+              </TicketListRow>
+            )
+          })}
+        </div>
       </TicketListContainer>
       <TicketsDetails selectedTicket={selectedTicket}/>
     </TicketSection>

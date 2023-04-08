@@ -8,6 +8,7 @@ import {supabase} from "@/lib/supabaseClient";
 import {Employee, TicketPriorities} from "@/features/ticket/models";
 import {PostgrestResponse} from "@supabase/supabase-js";
 import TicketStatus from "@/components/ticket-manager/components/TicketStatus";
+import {TextArea} from "@/components/core/TextArea";
 
 const TicketDetailsContainer = styled.div`
   min-height: 1rem;
@@ -31,16 +32,19 @@ const TicketHeader = styled.div`
   text-transform: uppercase;
 `
 function TicketsDetails({selectedTicket}: any) {
-
   const [description, setDescription] = useState<string>()
+  const [title, setTitle] = useState<string>()
   // TODO: this feels bad
   useEffect(() => {
     setDescription(selectedTicket?.description)
+    setTitle(selectedTicket?.title)
   }, [selectedTicket])
-  async function submitTicket() {
+  async function submitTicket(value: string, column: string) {
+    const newObject: any = {}
+    newObject[column] = value
     await supabase
       .from('Tickets')
-      .update({ description })
+      .update(newObject)
       .eq('id', selectedTicket.id)
   }
 
@@ -52,20 +56,27 @@ function TicketsDetails({selectedTicket}: any) {
           <p>HD-{selectedTicket?.id}</p>
         </TicketDetailsHeader>
         <TicketDetailsTitle>
-          <h3>{selectedTicket.title}</h3>
+          <TextArea
+            width="100%"
+            onBlur={(e: any) => submitTicket(e.target.value, 'title')}
+            onChange={(e: any) => setTitle(e.target.value)}
+            id="title"
+            name="title"
+            value={title}
+          >{title}</TextArea>
           <hr/>
         </TicketDetailsTitle>
         <TicketDetailsDescription>
           <TicketHeader>
             Description
           </TicketHeader>
-          <Textarea
+          <TextArea
             width="100%"
-            onBlur={submitTicket}
-            onChange={(e) => setDescription(e.target.value)}
+            onBlur={(e: any) => submitTicket(e.target.value, 'description')}
+            onChange={(e: any) => setDescription(e.target.value)}
             id="description"
             name="description"
-            value={description} />
+            value={description} >{description}</TextArea>
         </TicketDetailsDescription>
         <TicketStatus selectedTicket={selectedTicket}/>
         <TicketActivities selectedTicket={selectedTicket}/>
