@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import {Select} from "@geist-ui/core";
+import {Select, User} from "@geist-ui/core";
 import {Employee, TicketPriorities} from "@/features/ticket/models";
 import {supabase} from "@/lib/supabaseClient";
 import {PostgrestResponse} from "@supabase/supabase-js";

@@ -6,7 +6,7 @@ import {renderDate} from "@/lib/helpers/sharedFunctions";
 import TicketsDetails from "@/components/ticket-manager/components/TicketDetails";
 import {Circle, CheckInCircle} from '@geist-ui/icons'
 import Filter from "@geist-ui/icons/filter";
-import {Button} from "@geist-ui/core";
+import {Button, Select, User} from "@geist-ui/core";
 
 const DashCircle = styled.div`
   height: 1rem;
@@ -102,7 +102,14 @@ function TicketsOverview() {
   async function fetchTicketList() {
     let { data }: any  = await supabase
       .from('Tickets')
-      .select(`id, title, description, status, created_at`)
+      .select(`
+        id,
+        title,
+        description,
+        status,
+        created_at,
+        assignedTo:Employees!Tickets_assignedTo_fkey(id, name, avatarUrl)
+      `)
       .order('created_at')
     if (data) setTickets(data)
   }
@@ -127,7 +134,7 @@ function TicketsOverview() {
          linkedTickets,
          ticketType,
          priority,
-         assignedTo:Employees!Tickets_assignedTo_fkey(id, name),
+         assignedTo:Employees!Tickets_assignedTo_fkey(id, name, avatarUrl),
          TicketActivity(
            id, 
            created_at,
@@ -156,7 +163,7 @@ function TicketsOverview() {
                   <div style={{textAlign: "end"}}>{returnTicketIcon(ticket.status)}</div>
                 </TicketListFirstRow>
                 <TicketListSecondRow>
-                  <div/>
+                  {ticket.assignedTo.avatarUrl && <User src={ticket.assignedTo.avatarUrl} name={ticket.assignedTo.name} />}
                   <div style={{textAlign: "end"}}>{renderDate(ticket.created_at)}</div>
                 </TicketListSecondRow>
               </TicketListRow>

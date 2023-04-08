@@ -4,7 +4,7 @@ export type Ticket = {
   description: string,
   status: string | string[],
   title: string,
-  assignedTo: number,
+  assignedTo: number | any,
   priority: TicketPriorities,
   linkedTickets?: number[],
   ticketType: string | string[]
