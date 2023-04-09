@@ -139,11 +139,6 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
                   icon={<Inbox color="#858699" />}
                   auto
                   scale={1} >Inbox</Button>
-                <Button
-                  onClick={() => router.push('/settings')} style={{backgroundColor: determineButtonBackgroundColor('/settings'), border: 0}}
-                  icon={<Settings color="#858699"/>}
-                  auto
-                  scale={1}>Settings</Button>
               </SideNavBarNavigationButtons>
               <SideNavBarOperationalButtons>
                 <Button onClick={signOut} style={{backgroundColor: "transparent", border: 0}} icon={<LogOut />} auto scale={1}>Logout</Button>
