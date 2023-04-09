@@ -83,6 +83,7 @@ function TicketsOverview() {
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'Tickets' },
       async (payload: any) => {
+        console.log(payload)
         if (payload.new.id) {
           await fetchTicketList()
         }
