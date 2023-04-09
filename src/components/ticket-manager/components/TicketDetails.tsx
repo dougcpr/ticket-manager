@@ -2,13 +2,16 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {File} from "@geist-ui/icons";
 import TicketActivities from "@/components/ticket-manager/components/TicketActivities";
-import {Select, Textarea} from "@geist-ui/core";
+import {Button, Select, Textarea} from "@geist-ui/core";
 import {useFormik} from "formik";
 import {supabase} from "@/lib/supabaseClient";
-import {Employee, TicketPriorities} from "@/features/ticket/models";
+import {Employee, Ticket, TicketPriorities} from "@/features/ticket/models";
 import {PostgrestResponse} from "@supabase/supabase-js";
 import TicketStatus from "@/components/ticket-manager/components/TicketStatus";
 import {TextArea} from "@/components/core/TextArea";
+import Filter from "@geist-ui/icons/filter";
+import Trash from "@geist-ui/icons/trash";
+import Trash2 from "@geist-ui/icons/trash2";
 
 const TicketDetailsContainer = styled.div`
   min-height: 1rem;
@@ -48,12 +51,27 @@ function TicketsDetails({selectedTicket}: any) {
       .eq('id', selectedTicket.id)
   }
 
+  const deleteTicket = async () => {
+    try {
+      await supabase
+        .from('Tickets')
+        .delete()
+        .eq('id', selectedTicket?.id)
+    } catch (err) {
+      console.error(err)
+    } finally {}
+  }
+
   if (selectedTicket?.id) {
     return (
       <TicketDetailsContainer>
         <TicketDetailsHeader>
           <File />
-          <p>HD-{selectedTicket?.id}</p>
+          <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <p>HD-{selectedTicket?.id}</p>
+            <Button style={{border: "none"}} onClick={deleteTicket} auto iconRight={<Trash2/>} />
+          </div>
+
         </TicketDetailsHeader>
         <TicketDetailsTitle>
           <TextArea

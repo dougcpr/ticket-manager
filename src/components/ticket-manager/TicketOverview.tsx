@@ -88,6 +88,15 @@ function TicketsOverview() {
         }
       }
     )
+  supabase.channel('custom-delete-channel')
+    .on(
+      'postgres_changes',
+      { event: 'DELETE', schema: 'public', table: 'Tickets' },
+      async () => {
+        setSelectedTicket(undefined)
+        await fetchTicketList()
+      }
+    )
     .subscribe()
   supabase.channel('custom-update-channel')
     .on(
