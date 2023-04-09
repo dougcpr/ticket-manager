@@ -7,6 +7,7 @@ import TicketsDetails from "@/components/ticket-manager/components/TicketDetails
 import {Circle, CheckInCircle} from '@geist-ui/icons'
 import Filter from "@geist-ui/icons/filter";
 import {Button, Select, User} from "@geist-ui/core";
+import TicketFilter from "@/components/ticket-manager/components/TicketFilter";
 
 const DashCircle = styled.div`
   height: 1rem;
@@ -152,7 +153,7 @@ function TicketsOverview() {
     <TicketSection>
       <TicketListContainer>
         <div style={{padding: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          Inbox <Button style={{border: "none"}} auto iconRight={<Filter/>} />
+          Inbox <TicketFilter />
         </div>
         <div>
           {tickets && tickets.map((ticket: Ticket) => {
