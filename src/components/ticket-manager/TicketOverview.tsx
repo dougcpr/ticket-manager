@@ -77,18 +77,17 @@ function TicketsOverview() {
     fetchTicketList()
       .then((res) => {})
   }, [])
-
   supabase.channel('custom-insert-channel')
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'Tickets' },
-      async (payload: any) => {
-        console.log(payload)
+      async (payload) => {
         if (payload.new.id) {
           await fetchTicketList()
         }
       }
     )
+    .subscribe()
   supabase.channel('custom-delete-channel')
     .on(
       'postgres_changes',
