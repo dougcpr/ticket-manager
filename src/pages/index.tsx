@@ -3,7 +3,6 @@ import {Session, useSupabaseClient} from '@supabase/auth-helpers-react'
 import SignIn from "@/pages/sign-in";
 import {AuthChangeEvent} from "@supabase/gotrue-js";
 import {Bar, BarChart, ResponsiveContainer, XAxis, YAxis} from "recharts";
-import {supabase} from "@/lib/supabaseClient";
 const Index = () => {
   const [session, setSession] = useState<Session | null>(null)
   const [openTickets, setOpenTickets] = useState([])

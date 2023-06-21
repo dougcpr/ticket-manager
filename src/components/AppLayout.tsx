@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import styled from 'styled-components';
 import LogOut from "@geist-ui/icons/logOut";
 import {Button, Modal, Select} from "@geist-ui/core";
-import {Inbox, Settings} from "@geist-ui/icons";
+import {Inbox} from "@geist-ui/icons";
 import {Session, useSupabaseClient} from "@supabase/auth-helpers-react";
 import {AuthChangeEvent} from "@supabase/gotrue-js";
 import Home from "@geist-ui/icons/home";
@@ -12,6 +12,7 @@ import {useFormik} from "formik";
 import {Employee, Ticket, TicketPriorities} from "@/features/ticket/models";
 import {PostgrestResponse} from "@supabase/supabase-js";
 import {TextArea} from "@/components/core/TextArea";
+import SimpleDoc from "@/components/simpledoc/SimpleDoc";
 
 const NavBarContainer = styled.div`
   display: grid;
@@ -185,10 +186,15 @@ const AppLayout: FC<AppLayoutProps> = ({children}) => {
           <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
           <Modal.Action onClick={() => formik.handleSubmit()}>Submit</Modal.Action>
         </Modal>
+        <SimpleDoc />
       </>
     )
   } else {
-    return <>{children}</>
+    return (
+        <>
+          {children}
+        </>
+      )
   }
 
 };
