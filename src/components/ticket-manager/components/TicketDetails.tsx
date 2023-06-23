@@ -2,15 +2,10 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {File} from "@geist-ui/icons";
 import TicketActivities from "@/components/ticket-manager/components/TicketActivities";
-import {Button, Select, Textarea} from "@geist-ui/core";
-import {useFormik} from "formik";
+import {Button} from "@geist-ui/core";
 import {supabase} from "@/lib/supabaseClient";
-import {Employee, Ticket, TicketPriorities} from "@/features/ticket/models";
-import {PostgrestResponse} from "@supabase/supabase-js";
 import TicketStatus from "@/components/ticket-manager/components/TicketStatus";
 import {TextArea} from "@/components/core/TextArea";
-import Filter from "@geist-ui/icons/filter";
-import Trash from "@geist-ui/icons/trash";
 import Trash2 from "@geist-ui/icons/trash2";
 
 const TicketDetailsContainer = styled.div`

@@ -4,9 +4,7 @@ const useMousePosition = () => {
   const [mouseClickLocations, setMouseClickLocations] = useState<{ x: null, y: null }[]>([]);
   useEffect(() => {
     const updateMousePosition = (ev: any) => {
-      if (localStorage.getItem("recording") !== 'false') {
-        setMousePosition({x: ev.clientX, y: ev.clientY});
-      }
+      setMousePosition({x: ev.clientX, y: ev.clientY});
     };
     const trackMouseClickLocations = (ev: any) => {
       if (localStorage.getItem("recording") !== 'false') {
